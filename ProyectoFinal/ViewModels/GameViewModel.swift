@@ -14,17 +14,34 @@ class GameViewModel: ObservableObject {
     @Published var activeEndingDescription: String = ""
     
     @Published var timerValue: Double = 0
+    @Published var maxTimerValue: Double = 1.0
     @Published var isTimerActive: Bool = false
     
     private var timerCancellable: AnyCancellable?
 
     func startStory(_ story: Story) {
         self.currentStory = story
-        self.currentScene = story.scenes.first(where: { $0.id == story.initialSceneID })
+        let initialScene = story.scenes.first(where: { $0.id == story.initialSceneID })
+        self.currentScene = initialScene
         self.trust = 50
         self.bravery = 50
         self.humanity = 50
         self.gameCompleted = false
+        
+        if let scene = initialScene {
+            if let music = scene.musicTrack {
+                AudioManager.shared.playMusic(named: music)
+            } else {
+                AudioManager.shared.stopMusic()
+            }
+            
+            if !scene.choices.isEmpty {
+                let time = scene.timeLimit ?? 15.0
+                startTimer(seconds: time, maxSeconds: time)
+            } else {
+                stopTimer()
+            }
+        }
     }
     
     func makeChoice(_ choice: Choice) {
@@ -46,10 +63,18 @@ class GameViewModel: ObservableObject {
             self.currentScene = scene
         }
         
+        if let music = scene.musicTrack {
+            AudioManager.shared.playMusic(named: music)
+        }
+        
         if scene.isEnding {
             determineEnding()
-        } else if let time = scene.choices.first(where: { $0.timeLimit != nil })?.timeLimit {
-            startTimer(seconds: time)
+            stopTimer()
+        } else if !scene.choices.isEmpty {
+            let time = scene.timeLimit ?? 15.0
+            startTimer(seconds: time, maxSeconds: time)
+        } else {
+            stopTimer()
         }
     }
     
@@ -74,12 +99,16 @@ class GameViewModel: ObservableObject {
         }
     }
     
-    func startTimer(seconds: Double) {
-        timerValue = seconds
-        isTimerActive = true
+    func startTimer(seconds: Double, maxSeconds: Double) {
+        stopTimer()
+        self.maxTimerValue = maxSeconds > 0 ? maxSeconds : 15.0
+        self.timerValue = seconds
+        self.isTimerActive = true
+        
         timerCancellable = Timer.publish(every: 0.1, on: .main, in: .common)
             .autoconnect()
-            .sink { _ in
+            .sink { [weak self] _ in
+                guard let self = self else { return }
                 if self.timerValue > 0 {
                     self.timerValue -= 0.1
                 } else {
@@ -94,8 +123,21 @@ class GameViewModel: ObservableObject {
     }
     
     private func handleTimeOut() {
-        if let randomChoice = currentScene?.choices.randomElement() {
-            makeChoice(randomChoice)
+        stopTimer()
+        guard let scene = currentScene, !scene.choices.isEmpty else { return }
+        
+        if let worstChoice = scene.choices.first(where: { $0.isWorst }) {
+            makeChoice(worstChoice)
+        } else if let firstChoice = scene.choices.first {
+            makeChoice(firstChoice)
         }
+    }
+    
+    func resetGame() {
+        stopTimer()
+        AudioManager.shared.stopMusic()
+        self.currentStory = nil
+        self.currentScene = nil
+        self.gameCompleted = false
     }
 }

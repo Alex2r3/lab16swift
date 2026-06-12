@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		4EED3F392FB7689A00CAF08E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4EED3F382FB7689A00CAF08E /* Assets.xcassets */; };
 		4EED3F3C2FB7689A00CAF08E /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4EED3F3B2FB7689A00CAF08E /* Preview Assets.xcassets */; };
+		4EED3F9A2FB7689A00CAF99B /* Media in Resources */ = {isa = PBXBuildFile; fileRef = 4EED3F992FB7699A00CAF99A /* Media */; };
 		4EED3F462FB7689A00CAF08E /* ProyectoFinalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EED3F452FB7689A00CAF08E /* ProyectoFinalTests.swift */; };
 		4EED3F502FB7689A00CAF08E /* ProyectoFinalUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EED3F4F2FB7689A00CAF08E /* ProyectoFinalUITests.swift */; };
 		4EED3F522FB7689A00CAF08E /* ProyectoFinalUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EED3F512FB7689A00CAF08E /* ProyectoFinalUITestsLaunchTests.swift */; };
@@ -45,6 +46,7 @@
 /* Begin PBXFileReference section */
 		4EED3F312FB7689800CAF08E /* ProyectoFinal.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ProyectoFinal.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4EED3F382FB7689A00CAF08E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		4EED3F992FB7699A00CAF99A /* Media */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Media; path = Media; sourceTree = "<group>"; };
 		4EED3F3B2FB7689A00CAF08E /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		4EED3F412FB7689A00CAF08E /* ProyectoFinalTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ProyectoFinalTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4EED3F452FB7689A00CAF08E /* ProyectoFinalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProyectoFinalTests.swift; sourceTree = "<group>"; };
@@ -112,6 +114,7 @@
 		4EED3F332FB7689800CAF08E /* ProyectoFinal */ = {
 			isa = PBXGroup;
 			children = (
+				4EED3F992FB7699A00CAF99A /* Media */,
 				4EED3F732FB7695C00CAF08E /* ProyectoFinalApp.swift */,
 				4EED3F752FB7696400CAF08E /* Models */,
 				4EED3F702FB7694C00CAF08E /* Services */,
@@ -322,6 +325,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4EED3F9A2FB7689A00CAF99B /* Media in Resources */,
 				4EED3F3C2FB7689A00CAF08E /* Preview Assets.xcassets in Resources */,
 				4EED3F392FB7689A00CAF08E /* Assets.xcassets in Resources */,
 			);
