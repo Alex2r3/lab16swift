@@ -2,6 +2,7 @@ import SwiftUI
 
 struct NarrativeView: View {
     @ObservedObject var viewModel: GameViewModel
+    @ObservedObject var narrator = VoiceNarratorService.shared
     @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
@@ -42,7 +43,7 @@ struct NarrativeView: View {
             }
             
             // ── Vigneta de borde con degradado (4 bordes) ─────────────
-            if viewModel.isTimerActive && viewModel.maxTimerValue > 0 {
+            if viewModel.isTimerActive && viewModel.maxTimerValue > 0 && viewModel.showChoices {
                 let progress = max(0, min(1, (viewModel.maxTimerValue - viewModel.timerValue) / viewModel.maxTimerValue))
                 let vigOpacity = progress * 0.9
                 
@@ -107,7 +108,7 @@ struct NarrativeView: View {
                 .background(Color.black.opacity(0.55))
                 
                 // ── Timer Grande ─────────────────────────────────────
-                if viewModel.isTimerActive && viewModel.maxTimerValue > 0 {
+                if viewModel.isTimerActive && viewModel.maxTimerValue > 0 && viewModel.showChoices {
                     let progress = max(0, min(1, viewModel.timerValue / viewModel.maxTimerValue))
                     let isUrgent = viewModel.timerValue < 4.0
                     
@@ -146,7 +147,7 @@ struct NarrativeView: View {
                 
                 Spacer()
                 
-                // ── Diálogo y opciones ────────────────────────────────
+                // ── Diálogo, Controles y opciones ─────────────────────
                 VStack(spacing: 18) {
                     if let scene = viewModel.currentScene {
                         
@@ -176,17 +177,102 @@ struct NarrativeView: View {
                         )
                         .padding(.horizontal, 16)
                         
-                        // Opciones de decisión
-                        if !viewModel.gameCompleted {
-                            VStack(spacing: 10) {
-                                ForEach(scene.choices) { choice in
-                                    ChoiceButton(choice: choice) {
-                                        viewModel.makeChoice(choice)
+                        // HUD del Narrador de Voz
+                        if narrator.isSpeaking || narrator.isPaused {
+                            HStack(spacing: 16) {
+                                if narrator.isSpeaking && !narrator.isPaused {
+                                    SoundWaveVisualizer()
+                                } else {
+                                    HStack(spacing: 3) {
+                                        ForEach(0..<4) { _ in
+                                            RoundedRectangle(cornerRadius: 2)
+                                                .fill(Color.gray.opacity(0.5))
+                                                .frame(width: 3, height: 8)
+                                        }
                                     }
+                                    .frame(height: 24)
+                                }
+                                
+                                Button(action: {
+                                    if narrator.isPaused {
+                                        narrator.resume()
+                                    } else {
+                                        narrator.pause()
+                                    }
+                                }) {
+                                    Image(systemName: narrator.isPaused ? "play.fill" : "pause.fill")
+                                        .font(.title3)
+                                        .foregroundColor(.white)
+                                        .frame(width: 40, height: 40)
+                                        .background(Color.white.opacity(0.12))
+                                        .clipShape(Circle())
+                                }
+                                
+                                // Control de Velocidad
+                                VStack(alignment: .leading, spacing: 2) {
+                                    HStack(spacing: 4) {
+                                        Image(systemName: "gauge")
+                                            .font(.caption2)
+                                            .foregroundColor(.gray)
+                                        Text(String(format: "%.1fx", narrator.speechRate / 0.5))
+                                            .font(.system(size: 9, weight: .bold))
+                                            .foregroundColor(.white.opacity(0.7))
+                                    }
+                                    Slider(value: Binding(
+                                        get: { narrator.speechRate },
+                                        set: { newValue in
+                                            narrator.speechRate = newValue
+                                            if narrator.isSpeaking && !narrator.isPaused {
+                                                narrator.speak(scene.dialogue)
+                                            }
+                                        }
+                                    ), in: 0.25...0.75, step: 0.05)
+                                    .accentColor(Theme.accentYellow)
+                                    .frame(width: 100)
+                                }
+                                
+                                Spacer()
+                                
+                                Button(action: {
+                                    narrator.skip()
+                                }) {
+                                    Text("OMITIR")
+                                        .font(.system(size: 11, weight: .black))
+                                        .foregroundColor(Theme.accentYellow)
+                                        .padding(.vertical, 8)
+                                        .padding(.horizontal, 12)
+                                        .background(Theme.accentYellow.opacity(0.15))
+                                        .cornerRadius(8)
                                 }
                             }
                             .padding(.horizontal, 16)
-                            .padding(.bottom, 28)
+                            .padding(.vertical, 10)
+                            .background(
+                                RoundedRectangle(cornerRadius: 18)
+                                    .fill(Color.black.opacity(0.6))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 18)
+                                            .stroke(Color.white.opacity(0.1), lineWidth: 1)
+                                    )
+                            )
+                            .padding(.horizontal, 16)
+                            .transition(.opacity.combined(with: .scale))
+                        }
+                        
+                        // Opciones de decisión
+                        if !viewModel.gameCompleted {
+                            if viewModel.showChoices {
+                                VStack(spacing: 10) {
+                                    ForEach(scene.choices) { choice in
+                                        ChoiceButton(choice: choice) {
+                                            viewModel.makeChoice(choice)
+                                        }
+                                    }
+                                }
+                                .padding(.horizontal, 16)
+                                .padding(.bottom, 28)
+                                .transition(.move(edge: .bottom).combined(with: .opacity))
+                            }
                         } else {
                             // ── Pantalla de Final ─────────────────────
                             VStack(spacing: 22) {
@@ -228,6 +314,34 @@ struct NarrativeView: View {
         .navigationBarHidden(true)
         .onDisappear {
             viewModel.resetGame()
+            VoiceNarratorService.shared.stop()
+        }
+    }
+}
+
+// MARK: - Sound Wave Visualizer
+struct SoundWaveVisualizer: View {
+    @State private var animate = false
+    
+    var body: some View {
+        HStack(spacing: 3) {
+            ForEach(0..<4) { index in
+                RoundedRectangle(cornerRadius: 2)
+                    .fill(Theme.accentYellow)
+                    .frame(width: 3, height: animate ? CGFloat.random(in: 6...24) : 8)
+                    .animation(
+                        Animation.easeInOut(duration: Double.random(in: 0.25...0.45))
+                            .repeatForever(autoreverses: true),
+                        value: animate
+                    )
+            }
+        }
+        .frame(height: 24)
+        .onAppear {
+            animate = true
+        }
+        .onDisappear {
+            animate = false
         }
     }
 }

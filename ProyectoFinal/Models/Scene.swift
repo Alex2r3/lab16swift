@@ -1,7 +1,7 @@
 import Foundation
 
 struct GameScene: Identifiable, Codable {
-    let id: UUID
+    let id: String
     let characterName: String?
     let dialogue: String
     let backgroundImage: String
@@ -9,16 +9,18 @@ struct GameScene: Identifiable, Codable {
     let isEnding: Bool
     let musicTrack: String?
     let timeLimit: Double?
+    let endingTitle: String?
     
     init(
-        id: UUID = UUID(),
+        id: String,
         characterName: String? = nil,
         dialogue: String,
         backgroundImage: String,
         choices: [Choice] = [],
         isEnding: Bool = false,
         musicTrack: String? = nil,
-        timeLimit: Double? = nil
+        timeLimit: Double? = nil,
+        endingTitle: String? = nil
     ) {
         self.id = id
         self.characterName = characterName
@@ -28,5 +30,6 @@ struct GameScene: Identifiable, Codable {
         self.isEnding = isEnding
         self.musicTrack = musicTrack
         self.timeLimit = timeLimit
+        self.endingTitle = endingTitle
     }
 }

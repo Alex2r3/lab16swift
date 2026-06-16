@@ -79,9 +79,7 @@ struct LibraryView: View {
                         .padding()
                 } else {
                     ForEach(allStories) { story in
-                        NavigationLink(destination: NarrativeView(viewModel: viewModel).onAppear {
-                            viewModel.startStory(story)
-                        }) {
+                        NavigationLink(destination: StoryDetailView(story: story, viewModel: viewModel)) {
                             HStack(spacing: 16) {
                                 if let uiImage = MediaImageLoader.loadImage(named: story.coverImage) {
                                     Image(uiImage: uiImage)
@@ -148,6 +146,8 @@ struct LibraryView: View {
 
 // MARK: - Profile View
 struct ProfileView: View {
+    @ObservedObject var progressManager = ProgressManager.shared
+    
     var body: some View {
         ScrollView {
             VStack(spacing: 30) {
@@ -161,7 +161,8 @@ struct ProfileView: View {
                         .font(.title2).bold()
                         .foregroundColor(.white)
                     
-                    Text("Nivel 5 • Lector Habitual")
+                    let endingsCount = progressManager.getGlobalEndingCount()
+                    Text("Nivel \(1 + endingsCount / 2) • \(getTitleForLevel(endingsCount))")
                         .font(.subheadline)
                         .foregroundColor(.gray)
                 }
@@ -169,8 +170,8 @@ struct ProfileView: View {
                 
                 // Tarjetas de Estadísticas
                 HStack(spacing: 20) {
-                    ProfileStatCard(title: "Historias Leídas", value: "3")
-                    ProfileStatCard(title: "Finales Descubiertos", value: "5")
+                    ProfileStatCard(title: "Historias Iniciadas", value: "\(progressManager.getGlobalReadCount())")
+                    ProfileStatCard(title: "Finales Descubiertos", value: "\(progressManager.getGlobalEndingCount())")
                 }
                 .padding(.horizontal)
                 
@@ -181,10 +182,13 @@ struct ProfileView: View {
                         .foregroundColor(.white)
                         .padding(.horizontal)
                     
+                    let endingsCount = progressManager.getGlobalEndingCount()
+                    let readCount = progressManager.getGlobalReadCount()
+                    
                     VStack(spacing: 12) {
-                        AchievementRow(icon: "star.fill", title: "Primer Paso", desc: "Comenzaste tu primera aventura.", unlocked: true)
-                        AchievementRow(icon: "timer", title: "Reflejos Rápidos", desc: "Tomaste una decisión antes del límite de tiempo.", unlocked: true)
-                        AchievementRow(icon: "skull.fill", title: "Destino Cruel", desc: "Llegaste a un final trágico al agotarse el tiempo.", unlocked: true)
+                        AchievementRow(icon: "star.fill", title: "Primer Paso", desc: "Comenzaste tu primera aventura.", unlocked: readCount >= 1)
+                        AchievementRow(icon: "timer", title: "Reflejos Rápidos", desc: "Tomaste una decisión antes del límite de tiempo.", unlocked: readCount >= 1)
+                        AchievementRow(icon: "crown.fill", title: "Coleccionista de Destinos", desc: "Desbloqueaste al menos 3 finales.", unlocked: endingsCount >= 3)
                     }
                     .padding(.horizontal)
                 }
@@ -192,6 +196,18 @@ struct ProfileView: View {
             .padding(.bottom, 50)
         }
         .background(Theme.black.ignoresSafeArea())
+    }
+    
+    func getTitleForLevel(_ endingsCount: Int) -> String {
+        if endingsCount >= 10 {
+            return "Maestro de Destinos"
+        } else if endingsCount >= 5 {
+            return "Lector Avanzado"
+        } else if endingsCount >= 2 {
+            return "Aventurero Novato"
+        } else {
+            return "Viajero Inicial"
+        }
     }
 }
 

@@ -2,9 +2,9 @@ import Foundation
 
 
 struct Choice: Identifiable, Codable {
-    let id: UUID
+    let id: String
     let text: String
-    let targetSceneID: UUID
+    let targetSceneID: String
     let isCritical: Bool
     let timeLimit: Double?
     let isBest: Bool
@@ -18,7 +18,7 @@ struct Choice: Identifiable, Codable {
     // Inicializador corregido para ser más flexible
     init(
         text: String,
-        targetSceneID: UUID,
+        targetSceneID: String,
         isCritical: Bool = false,
         timeLimit: Double? = nil,
         isBest: Bool = false,
@@ -27,7 +27,7 @@ struct Choice: Identifiable, Codable {
         bravery: Int = 0,
         humanity: Int = 0
     ) {
-        self.id = UUID()
+        self.id = UUID().uuidString
         self.text = text
         self.targetSceneID = targetSceneID
         self.isCritical = isCritical

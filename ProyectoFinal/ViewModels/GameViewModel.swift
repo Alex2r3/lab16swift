@@ -17,35 +17,48 @@ class GameViewModel: ObservableObject {
     @Published var maxTimerValue: Double = 1.0
     @Published var isTimerActive: Bool = false
     
+    // Narrador por voz
+    @Published var showChoices: Bool = false
+    @Published var speechRate: Float = AVSpeechUtteranceDefaultSpeechRate {
+        didSet {
+            VoiceNarratorService.shared.speechRate = speechRate
+        }
+    }
+    
     private var timerCancellable: AnyCancellable?
+    private var narratorCancellables = Set<AnyCancellable>()
+
+    init() {
+        // Sincronizar velocidad del narrador
+        VoiceNarratorService.shared.$speechRate
+            .sink { [weak self] rate in
+                guard let self = self else { return }
+                if self.speechRate != rate {
+                    self.speechRate = rate
+                }
+            }
+            .store(in: &narratorCancellables)
+    }
 
     func startStory(_ story: Story) {
         self.currentStory = story
-        let initialScene = story.scenes.first(where: { $0.id == story.initialSceneID })
-        self.currentScene = initialScene
         self.trust = 50
         self.bravery = 50
         self.humanity = 50
         self.gameCompleted = false
+        self.activeEndingTitle = ""
+        self.activeEndingDescription = ""
         
+        let initialScene = story.scenes.first(where: { $0.id == story.initialSceneID })
         if let scene = initialScene {
-            if let music = scene.musicTrack {
-                AudioManager.shared.playMusic(named: music)
-            } else {
-                AudioManager.shared.stopMusic()
-            }
-            
-            if !scene.choices.isEmpty {
-                let time = scene.timeLimit ?? 15.0
-                startTimer(seconds: time, maxSeconds: time)
-            } else {
-                stopTimer()
-            }
+            transitionToScene(scene)
         }
     }
     
     func makeChoice(_ choice: Choice) {
         stopTimer()
+        VoiceNarratorService.shared.stop()
+        AudioManager.shared.setVolume(1.0)
         
         withAnimation(.spring()) {
             trust = max(0, min(100, trust + choice.trustImpact))
@@ -53,49 +66,84 @@ class GameViewModel: ObservableObject {
             humanity = max(0, min(100, humanity + choice.humanityImpact))
         }
         
-        if let nextScene = currentStory?.scenes.first(where: { $0.id == choice.targetSceneID }) {
+        var targetSceneID = choice.targetSceneID
+        
+        // Interceptar la escena de final del Último Faro para redirigir dinámicamente según estadísticas
+        if targetSceneID == "final" {
+            if humanity >= 80 && trust >= 70 {
+                targetSceneID = "final_sacrificio"
+            } else if bravery >= 80 && humanity >= 60 {
+                targetSceneID = "final_escape"
+            } else if trust <= 30 && humanity <= 40 {
+                targetSceneID = "final_soledad"
+            } else if bravery >= 70 && trust >= 40 {
+                targetSceneID = "final_secreto"
+            } else {
+                targetSceneID = "final_verdad"
+            }
+        }
+        
+        if let nextScene = currentStory?.scenes.first(where: { $0.id == targetSceneID }) {
             transitionToScene(nextScene)
         }
     }
     
     private func transitionToScene(_ scene: GameScene) {
+        // Registrar visita a la escena en el ProgressManager
+        if let story = currentStory {
+            ProgressManager.shared.visitScene(storyTitle: story.title, sceneID: scene.id)
+        }
+        
         withAnimation(.easeInOut(duration: 0.8)) {
             self.currentScene = scene
+            self.showChoices = false // Ocultar opciones al iniciar la narración
         }
         
+        // Detener el temporizador mientras se narra
+        stopTimer()
+        
+        // Reproducir música
         if let music = scene.musicTrack {
             AudioManager.shared.playMusic(named: music)
+        } else {
+            AudioManager.shared.stopMusic()
         }
         
-        if scene.isEnding {
-            determineEnding()
-            stopTimer()
-        } else if !scene.choices.isEmpty {
-            let time = scene.timeLimit ?? 15.0
-            startTimer(seconds: time, maxSeconds: time)
-        } else {
-            stopTimer()
+        // Configurar y reproducir el narrador por voz
+        let narrator = VoiceNarratorService.shared
+        AudioManager.shared.setVolume(0.2) // Atenuar música de fondo
+        
+        narrator.onCompletion = { [weak self] in
+            guard let self = self else { return }
+            
+            // Restaurar volumen y mostrar opciones
+            AudioManager.shared.setVolume(1.0)
+            
+            withAnimation(.spring()) {
+                self.showChoices = true
+            }
+            
+            // Si la escena es un final, registrarlo y finalizar la sesión
+            if scene.isEnding {
+                self.determineEnding(for: scene)
+            } else if !scene.choices.isEmpty {
+                // Iniciar temporizador solo después de terminar la narración
+                let time = scene.timeLimit ?? 15.0
+                self.startTimer(seconds: time, maxSeconds: time)
+            }
         }
+        
+        narrator.speak(scene.dialogue)
     }
     
-    private func determineEnding() {
+    private func determineEnding(for scene: GameScene) {
         self.gameCompleted = true
+        self.activeEndingTitle = scene.displayNameForEnding
+        self.activeEndingDescription = scene.dialogue
         
-        if humanity >= 80 && trust >= 70 {
-            activeEndingTitle = "SACRIFICIO"
-            activeEndingDescription = "Alex activa el faro para salvar a los demás, pero queda atrapado para siempre en sus engranajes de luz."
-        } else if bravery >= 80 && humanity >= 60 {
-            activeEndingTitle = "ESCAPE"
-            activeEndingDescription = "Lograste reparar el barco. El horizonte ya no es un sueño, sino tu destino."
-        } else if trust <= 30 && humanity <= 40 {
-            activeEndingTitle = "SOLEDAD"
-            activeEndingDescription = "Tus aliados se han ido. El faro se apaga y la oscuridad de la isla te consume."
-        } else if bravery >= 70 && trust >= 40 {
-            activeEndingTitle = "EL SECRETO DEL FARO"
-            activeEndingDescription = "Has descubierto la tecnología de manipulación mental. El mundo nunca volverá a ser el mismo."
-        } else {
-            activeEndingTitle = "LA VERDAD"
-            activeEndingDescription = "Las paredes de la realidad se desmoronan. Todo era una simulación de laboratorio."
+        // Registrar final descubierto
+        if let story = currentStory {
+            ProgressManager.shared.unlockEnding(storyTitle: story.title, endingID: scene.id)
         }
     }
     
@@ -135,9 +183,14 @@ class GameViewModel: ObservableObject {
     
     func resetGame() {
         stopTimer()
+        VoiceNarratorService.shared.stop()
         AudioManager.shared.stopMusic()
+        AudioManager.shared.setVolume(1.0)
         self.currentStory = nil
         self.currentScene = nil
         self.gameCompleted = false
+        self.activeEndingTitle = ""
+        self.activeEndingDescription = ""
+        self.showChoices = false
     }
 }
