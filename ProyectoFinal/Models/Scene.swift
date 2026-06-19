@@ -10,6 +10,9 @@ struct GameScene: Identifiable, Codable {
     let musicTrack: String?
     let timeLimit: Double?
     let endingTitle: String?
+    var displayNameForEnding: String {
+        return endingTitle ?? "Final"
+    }
     
     init(
         id: String,
@@ -33,3 +36,4 @@ struct GameScene: Identifiable, Codable {
         self.endingTitle = endingTitle
     }
 }
+

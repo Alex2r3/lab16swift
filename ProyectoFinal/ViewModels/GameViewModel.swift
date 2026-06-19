@@ -1,5 +1,6 @@
 import SwiftUI
 import Combine
+import AVFoundation
 
 class GameViewModel: ObservableObject {
     @Published var currentStory: Story?

@@ -248,9 +248,9 @@ struct StoryDetailView: View {
                     }) {
                         HStack {
                             Image(systemName: "play.fill")
-                            Text(progress.visitedSceneIDs.isEmpty ? "COMENZAR AVENTURA" : "CONTINUAR AVENTURA")
+                            Text(progress.visitedSceneIDs.isEmpty ? "COMENZAR AVENTURA" : "CONTINUAR AVENTURA").bold()
                         }
-                        .font(.headline).bold()
+                        .font(.headline)
                         .foregroundColor(.black)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 16)
@@ -267,9 +267,9 @@ struct StoryDetailView: View {
                         NavigationLink(destination: DecisionTreeView(story: story)) {
                             HStack {
                                 Image(systemName: "square.grid.3x1.folder.badge.plus")
-                                Text("Decisiones")
+                                Text("Decisiones").bold()
                             }
-                            .font(.subheadline).bold()
+                            .font(.subheadline)
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 14)
@@ -283,9 +283,9 @@ struct StoryDetailView: View {
                         NavigationLink(destination: EndingGalleryView(story: story)) {
                             HStack {
                                 Image(systemName: "crown")
-                                Text("Finales")
+                                Text("Finales").bold()
                             }
-                            .font(.subheadline).bold()
+                            .font(.subheadline)
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 14)
