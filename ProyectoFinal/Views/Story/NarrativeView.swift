@@ -38,9 +38,27 @@ struct NarrativeView: View {
             }
         }
         .navigationBarHidden(true)
+        .onAppear {
+            // Ocultar tab bar para experiencia inmersiva de juego
+            setTabBarHidden(true)
+        }
         .onDisappear {
+            // Restaurar tab bar al salir de la vista
+            setTabBarHidden(false)
             viewModel.resetGame()
             VoiceNarratorService.shared.stop()
+        }
+    }
+    
+    /// Oculta o muestra el UITabBar del TabView padre
+    private func setTabBarHidden(_ hidden: Bool) {
+        guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let window = scene.windows.first(where: { $0.isKeyWindow }),
+              let tabBar = window.rootViewController as? UITabBarController
+        else { return }
+        UIView.animate(withDuration: 0.2) {
+            tabBar.tabBar.isHidden = hidden
+            tabBar.tabBar.alpha = hidden ? 0 : 1
         }
     }
     
@@ -288,10 +306,8 @@ struct NarrativeView: View {
                         }
                         .animation(.easeInOut(duration: 0.45), value: viewModel.showChoices)
                         .animation(.easeInOut(duration: 0.35), value: viewModel.gameCompleted)
-                        .safeAreaInset(edge: .bottom) {
-                            // Espacio que respeta la barra de navegación / home indicator
-                            Color.clear.frame(height: 16)
-                        }
+                        // Padding inferior: home indicator (~34pt) + espacio de aire
+                        .padding(.bottom, 50)
                     }
                 }
                 .ignoresSafeArea(edges: .bottom)
