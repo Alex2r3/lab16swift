@@ -200,7 +200,7 @@ struct NarrativeView: View {
                                         }
                                     }
                                     .padding(.horizontal, 16)
-                                    .padding(.bottom, 32)
+                                    .padding(.bottom, 8)
                                     .transition(.asymmetric(
                                         insertion: .move(edge: .bottom).combined(with: .opacity),
                                         removal:   .move(edge: .bottom).combined(with: .opacity)
@@ -278,7 +278,7 @@ struct NarrativeView: View {
                                             .transition(.opacity.combined(with: .scale))
                                         }
                                     }
-                                    .padding(.bottom, 24)
+                                    .padding(.bottom, 8)
                                     .transition(.asymmetric(
                                         insertion: .move(edge: .bottom).combined(with: .opacity),
                                         removal:   .move(edge: .bottom).combined(with: .opacity)
@@ -288,6 +288,10 @@ struct NarrativeView: View {
                         }
                         .animation(.easeInOut(duration: 0.45), value: viewModel.showChoices)
                         .animation(.easeInOut(duration: 0.35), value: viewModel.gameCompleted)
+                        .safeAreaInset(edge: .bottom) {
+                            // Espacio que respeta la barra de navegación / home indicator
+                            Color.clear.frame(height: 16)
+                        }
                     }
                 }
                 .ignoresSafeArea(edges: .bottom)
@@ -490,3 +494,4 @@ struct SoundWaveVisualizer: View {
         .onDisappear { animate = false }
     }
 }
+

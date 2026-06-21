@@ -27,10 +27,14 @@ struct ChoiceButton: View {
             .frame(maxWidth: .infinity)
             .background(
                 RoundedRectangle(cornerRadius: 14)
-                    .fill(Color.white.opacity(0.08))
+                    .fill(Color.black.opacity(0.55))   // Fondo oscuro para legibilidad
                     .overlay(
                         RoundedRectangle(cornerRadius: 14)
-                            .stroke(Color.white.opacity(0.2), lineWidth: 1)
+                            .fill(Color.white.opacity(0.07))  // Toque vidrioso
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 14)
+                            .stroke(Color.white.opacity(0.25), lineWidth: 1)
                     )
             )
         }
