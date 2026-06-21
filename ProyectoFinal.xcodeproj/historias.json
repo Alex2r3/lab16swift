@@ -1,0 +1,886 @@
+[
+  {
+    "id": "1_1",
+    "titulo": "¡Guarda el cel, Chunga!",
+    "introduccion": "Estás iniciando un nuevo día en el campus de Tecsup, enfocado en tus responsabilidades, pero la tentación digital siempre está al acecho.",
+    "narracion": "Eres Antonio Alexander Chunga Alcocer. Estás sentado al fondo del laboratorio de Desarrollo Móvil. El aire acondicionado zumba, pero tú sudas frío: llevas varios minutos texteando con tu vro en lugar de compilar el proyecto. De pronto, el ingeniero deja de escribir en la pizarra, se voltea y clava su mirada directamente en tus ojos. Sientes que si sigues mirando la pantalla del celular, te convertirás en el ejemplo negativo de toda la clase.",
+    "imagen": "escena_1_aula",
+    "es_final": false,
+    "decisiones": [
+      {
+        "texto": "Bloquear el celular de golpe y fingir atención absoluta",
+        "nodo_destino_id": "2_1",
+        "introduccion_destino": "Al ver que guardas el teléfono, el ingeniero frunce el ceño y continúa dictando. Te salvaste por un pelo, vro.",
+        "requisitos": { "disciplina_minima": 0, "inteligencia_practica_minima": 0, "confianza_minima": 0, "energia_minima": 0 },
+        "consecuencias": { "modificar_disciplina": 1, "modificar_inteligencia_practica": 0, "modificar_confianza": 0, "modificar_energia": 0 }
+      },
+      {
+        "texto": "Hacerte el loco y mandar el último sticker al grupo",
+        "nodo_destino_id": "2_1",
+        "introduccion_destino": "¡Mala idea! El sonido te delata. El ingeniero te mete una humillación pública frente a todos preguntándote sobre la jerarquía de vistas. Sales con la moral en el piso.",
+        "requisitos": { "disciplina_minima": 0, "inteligencia_practica_minima": 0, "confianza_minima": 0, "energia_minima": 0 },
+        "consecuencias": { "modificar_disciplina": -2, "modificar_inteligencia_practica": 0, "modificar_confianza": -2, "modificar_energia": 0 }
+      },
+      {
+        "texto": "Responder el mensaje rápido y dejar el cel sobre la mesa",
+        "nodo_destino_id": "1_ALT_REPLY",
+        "introduccion_destino": "El profe camina hacia ti, te quita el celular de la mesa y lo deja en su escritorio hasta el final de la clase. Pasas las siguientes horas ansioso y sin apuntes fotográficos.",
+        "requisitos": { "disciplina_minima": 0, "inteligencia_practica_minima": 0, "confianza_minima": 0, "energia_minima": 0 },
+        "consecuencias": { "modificar_disciplina": -1, "modificar_inteligencia_practica": 0, "modificar_confianza": -1, "modificar_energia": -1 }
+      }
+    ]
+  },
+  {
+    "id": "1_ALT_REPLY",
+    "titulo": "El Castigo del Desconectado",
+    "introduccion": "Recuperas tu teléfono al final de la sesión, pero el daño psicológico ya está hecho.",
+    "narracion": "Te perdiste la mitad de la explicación por estar pensando en quién te estaba escribiendo. Sales del laboratorio sintiéndote un paso atrás de los demás.",
+    "imagen": "escena_1_alt_castigo",
+    "es_final": false,
+    "decisiones": [
+      {
+        "texto": "Aceptar el error y dirigirte al portal académico",
+        "nodo_destino_id": "2_1",
+        "introduccion_destino": "Te sacudes la frustración, abres tu laptop en el patio y te preparas para ver qué sigue en tu semana.",
+        "requisitos": { "disciplina_minima": 0, "inteligencia_practica_minima": 0, "confianza_minima": 0, "energia_minima": 0 },
+        "consecuencias": { "modificar_disciplina": 1, "modificar_inteligencia_practica": 0, "modificar_confianza": 0, "modificar_energia": 0 }
+      }
+    ]
+  },
+  {
+    "id": "2_1",
+    "titulo": "La Tormenta de los Finales",
+    "introduccion": "La clase termina, pero la verdadera presión apenas comienza.",
+    "narracion": "Al abrir el portal académico de Tecsup, la realidad te da un periodicazo en la cara. El cronograma de exámenes finales se acaba de publicar y es una masacre: Programación, Base de Datos, Redes y Móviles acumulados. Además, es viernes por la tarde, y los grupos de WhatsApp empiezan a invitar a una fiesta en la facultad.",
+    "imagen": "escena_2_calendario",
+    "es_final": false,
+    "decisiones": [
+      {
+        "texto": "Diseñar un horario de estudio de emergencia para la semana",
+        "nodo_destino_id": "3_1",
+        "introduccion_destino": "Te sientas a armar un Excel con tus horarios. El plan te da una ligera sensación de control.",
+        "requisitos": { "disciplina_minima": 0, "inteligencia_practica_minima": 0, "confianza_minima": 0, "energia_minima": 0 },
+        "consecuencias": { "modificar_disciplina": 1, "modificar_inteligencia_practica": 0, "modificar_confianza": 1, "modificar_energia": 0 }
+      },
+      {
+        "texto": "Ignorar el aviso ('Dios proveerá, un día antes se repasa')",
+        "nodo_destino_id": "3_1",
+        "introduccion_destino": "Cierras la intranet restándole importancia. Pero esa misma noche, un mensaje de tu delegado te saca de tu zona de confort.",
+        "requisitos": { "disciplina_minima": 0, "inteligencia_practica_minima": 0, "confianza_minima": 0, "energia_minima": 0 },
+        "consecuencias": { "modificar_disciplina": -1, "modificar_inteligencia_practica": 0, "modificar_confianza": 0, "modificar_energia": 1 }
+      },
+      {
+        "texto": "Ir a la fiesta de la facultad para 'relajar tensiones'",
+        "nodo_destino_id": "2_ALT_PARTY",
+        "introduccion_destino": "Dices 'solo un par de horas' y terminas regresando a tu casa a las 4 AM. Fue épico, pero la factura llega al amanecer.",
+        "requisitos": { "disciplina_minima": 0, "inteligencia_practica_minima": 0, "confianza_minima": 0, "energia_minima": 0 },
+        "consecuencias": { "modificar_disciplina": -3, "modificar_inteligencia_practica": 0, "modificar_confianza": 1, "modificar_energia": -3 }
+      }
+    ]
+  },
+  {
+    "id": "2_ALT_PARTY",
+    "titulo": "La Resaca del Sabadito",
+    "introduccion": "La luz del sol entra por tu ventana y perfora tu cráneo.",
+    "narracion": "Te despiertas pasado el mediodía con la boca seca y la cabeza dándote vueltas. Al revisar tu celular, ves 15 mensajes del grupo de tu proyecto integrador preguntando por tu parte del código. Te das cuenta del grave error que cometiste.",
+    "imagen": "escena_2_alt_fiesta",
+    "es_final": false,
+    "decisiones": [
+      {
+        "texto": "Tomar un café cargado y enfrentar la cruda realidad",
+        "nodo_destino_id": "3_PARTY_HANGOVER",
+        "introduccion_destino": "Te arrastras hacia la laptop. Estás en terrible desventaja, pero no puedes huir de tus responsabilidades.",
+        "requisitos": { "disciplina_minima": 0, "inteligencia_practica_minima": 0, "confianza_minima": 0, "energia_minima": 0 },
+        "consecuencias": { "modificar_disciplina": 1, "modificar_inteligencia_practica": 0, "modificar_confianza": -1, "modificar_energia": 0 }
+      }
+    ]
+  },
+  {
+    "id": "3_PARTY_HANGOVER",
+    "titulo": "Deuda Técnica y Física",
+    "introduccion": "El tiempo que perdiste de fiesta ya no se recupera.",
+    "narracion": "Intentas leer los requerimientos del proyecto, pero las letras bailan en la pantalla. Estás demasiado cansado y desmotivado. Tratas de avanzar algo, pero sabes que tu rendimiento está por los suelos.",
+    "imagen": "escena_3_resaca",
+    "es_final": false,
+    "decisiones": [
+      {
+        "texto": "Hacer lo mínimo indispensable y enviarlo",
+        "nodo_destino_id": "4_ALT_B",
+        "introduccion_destino": "Subes un commit mediocre a GitHub. Sabes que tu equipo te va a odiar, y que tendrás que afrontar las consecuencias en los exámenes.",
+        "requisitos": { "disciplina_minima": 0, "inteligencia_practica_minima": 0, "confianza_minima": 0, "energia_minima": 0 },
+        "consecuencias": { "modificar_disciplina": -1, "modificar_inteligencia_practica": -1, "modificar_confianza": -1, "modificar_energia": 0 }
+      }
+    ]
+  },
+  {
+    "id": "3_1",
+    "titulo": "El Cadáver en el Repositorio",
+    "introduccion": "Revisando las tareas pendientes, se te congela la sangre.",
+    "narracion": "Descubres un problema crítico: tienes pendiente una parte gigante de un proyecto integrador que vale casi el 40% de la nota final. Postergar este entregable es el primer paso para terminar pagando un ciclo extraordinario. El reloj corre y la lógica de negocio es complicadísima.",
+    "imagen": "escena_3_laptop",
+    "es_final": false,
+    "decisiones": [
+      {
+        "texto": "Clavar los codos en la mesa y avanzar el proyecto solo",
+        "nodo_destino_id": "4_1",
+        "introduccion_destino": "Ignoras el cansancio y pasas la tarde picando código hasta dejar el proyecto decente.",
+        "requisitos": { "disciplina_minima": 0, "inteligencia_practica_minima": 0, "confianza_minima": 0, "energia_minima": 0 },
+        "consecuencias": { "modificar_disciplina": 2, "modificar_inteligencia_practica": 1, "modificar_confianza": 0, "modificar_energia": -1 }
+      },
+      {
+        "texto": "Ir a la oficina del profe a pedir asesoría (Tragarte el orgullo)",
+        "nodo_destino_id": "3_PROF_HELP",
+        "introduccion_destino": "Caminas a la sala de profesores. El ingeniero te recibe con cara de pocos amigos, pero acepta revisar tu código.",
+        "requisitos": { "disciplina_minima": 0, "inteligencia_practica_minima": 0, "confianza_minima": 0, "energia_minima": 0 },
+        "consecuencias": { "modificar_disciplina": 1, "modificar_inteligencia_practica": 2, "modificar_confianza": -1, "modificar_energia": 0 }
+      },
+      {
+        "texto": "Dejar el proyecto para jugar unas partidas de Valorant con tu vro",
+        "nodo_destino_id": "4_ALT_B",
+        "introduccion_destino": "Te gana la flojera y te amaneces jugando. Al día siguiente despiertas con una culpa tremenda.",
+        "requisitos": { "disciplina_minima": 0, "inteligencia_practica_minima": 0, "confianza_minima": 0, "energia_minima": 0 },
+        "consecuencias": { "modificar_disciplina": -3, "modificar_inteligencia_practica": 0, "modificar_confianza": -1, "modificar_energia": -2 }
+      }
+    ]
+  },
+  {
+    "id": "3_PROF_HELP",
+    "titulo": "La Sabiduría del Ingeniero",
+    "introduccion": "El profe revisa tu diagrama de clases y suelta un suspiro.",
+    "narracion": "'Chunga, estás complicando la arquitectura en vano', te dice. En 15 minutos de garabatos en su pizarra acrílica, te explica un patrón de diseño que resuelve tu cuello de botella. Te sientes un poco tonto, pero tu mente acaba de expandirse enormemente.",
+    "imagen": "escena_3_profesor",
+    "es_final": false,
+    "decisiones": [
+      {
+        "texto": "Agradecer e ir a aplicar lo aprendido",
+        "nodo_destino_id": "4_1",
+        "introduccion_destino": "Sales de la oficina inspirado. Tienes el plano mental claro, solo falta ensuciarse las manos.",
+        "requisitos": { "disciplina_minima": 0, "inteligencia_practica_minima": 0, "confianza_minima": 0, "energia_minima": 0 },
+        "consecuencias": { "modificar_disciplina": 0, "modificar_inteligencia_practica": 1, "modificar_confianza": 1, "modificar_energia": 0 }
+      }
+    ]
+  },
+  {
+    "id": "4_1",
+    "titulo": "Santuario de Código",
+    "introduccion": "Con el proyecto a salvo, te diriges a tu zona de confort académico.",
+    "narracion": "Te encierras en la biblioteca de Tecsup. El ambiente huele a libros antiguos y café barato. Tienes la opción de aislarte del mundo para repasar a tu propio ritmo, o invitar a unos compañeros de clase para estudiar en grupo y apoyarse mutuamente.",
+    "imagen": "escena_4_biblioteca",
+    "es_final": false,
+    "decisiones": [
+      {
+        "texto": "Machacar código tú solo con auriculares y lofi hip hop",
+        "nodo_destino_id": "5_1",
+        "introduccion_destino": "Te aíslas del mundo. La lógica empieza a hacer clic en tu cabeza y avanzas a pasos agigantados.",
+        "requisitos": { "disciplina_minima": 0, "inteligencia_practica_minima": 0, "confianza_minima": 0, "energia_minima": 0 },
+        "consecuencias": { "modificar_disciplina": 1, "modificar_inteligencia_practica": 2, "modificar_confianza": 1, "modificar_energia": -1 }
+      },
+      {
+        "texto": "Armar un grupo de estudio en un cubículo de la biblioteca",
+        "nodo_destino_id": "4_GROUP_STUDY",
+        "introduccion_destino": "Llamas a un par de vros. Ocupan una pizarra y empiezan a debatir cómo normalizar una base de datos.",
+        "requisitos": { "disciplina_minima": 0, "inteligencia_practica_minima": 0, "confianza_minima": 0, "energia_minima": 0 },
+        "consecuencias": { "modificar_disciplina": 0, "modificar_inteligencia_practica": 1, "modificar_confianza": 1, "modificar_energia": 0 }
+      }
+    ]
+  },
+  {
+    "id": "4_GROUP_STUDY",
+    "titulo": "El Filo de la Navaja del Trabajo en Equipo",
+    "introduccion": "El grupo de estudio va bien durante la primera hora.",
+    "narracion": "Logran resolver un par de ejercicios pesados de Redes. Sin embargo, uno de tus amigos saca su celular y empieza a mostrar videos graciosos. Otro sugiere pedir unas pizzas y dejar el estudio 'para después de comer'. La sesión está a punto de descarrilarse.",
+    "imagen": "escena_4_grupo",
+    "es_final": false,
+    "decisiones": [
+      {
+        "texto": "Imponer orden y obligarlos a terminar la guía de ejercicios",
+        "nodo_destino_id": "5_1",
+        "introduccion_destino": "Te pones en modo líder tóxico, pero funciona. Terminan la guía y todos te lo agradecen (internamente).",
+        "requisitos": { "disciplina_minima": 1, "inteligencia_practica_minima": 0, "confianza_minima": 0, "energia_minima": 0 },
+        "consecuencias": { "modificar_disciplina": 2, "modificar_inteligencia_practica": 1, "modificar_confianza": 1, "modificar_energia": -1 }
+      },
+      {
+        "texto": "Ceder a la tentación, pedir pizza y ver memes",
+        "nodo_destino_id": "4_GROUP_DISTRACTED",
+        "introduccion_destino": "La comida llega y el estudio muere. Pasan tres horas riendo y no abren un solo PDF más.",
+        "requisitos": { "disciplina_minima": 0, "inteligencia_practica_minima": 0, "confianza_minima": 0, "energia_minima": 0 },
+        "consecuencias": { "modificar_disciplina": -2, "modificar_inteligencia_practica": -1, "modificar_confianza": 0, "modificar_energia": 1 }
+      }
+    ]
+  },
+  {
+    "id": "4_GROUP_DISTRACTED",
+    "titulo": "Procrastinación Colectiva",
+    "introduccion": "La biblioteca cierra y los echan.",
+    "narracion": "Sales con el estómago lleno de pizza pero con la cabeza completamente vacía. Te despides de tus amigos sabiendo que acaban de botar a la basura la tarde más importante de la semana. Ya es muy tarde para estudiar solo.",
+    "imagen": "escena_4_distraidos",
+    "es_final": false,
+    "decisiones": [
+      {
+        "texto": "Ir a casa y aceptar el desastre del día",
+        "nodo_destino_id": "5_1",
+        "introduccion_destino": "Llegas a tu cama sintiéndote inútil. Al día siguiente, la intranet te recibe con una sorpresa amarga.",
+        "requisitos": { "disciplina_minima": 0, "inteligencia_practica_minima": 0, "confianza_minima": 0, "energia_minima": 0 },
+        "consecuencias": { "modificar_disciplina": 0, "modificar_inteligencia_practica": 0, "modificar_confianza": -1, "modificar_energia": 0 }
+      }
+    ]
+  },
+  {
+    "id": "4_ALT_B",
+    "titulo": "El Desmadre de la Procrastinación",
+    "introduccion": "Llegas al instituto arrastrando los pies.",
+    "narracion": "Intentas estudiar en los pasillos de Tecsup minutos antes de las evaluaciones. El ruido de los demás alumnos y tu propia desesperación hacen que las fórmulas de redes parezcan jeroglíficos. Estás pagando caro tus malas decisiones previas.",
+    "imagen": "escena_4_pasillo",
+    "es_final": false,
+    "decisiones": [
+      {
+        "texto": "Entrar al examen arrastrando lo que sabes",
+        "nodo_destino_id": "5_1",
+        "introduccion_destino": "El examen es una tortura. Haces lo que puedes y esperas lo mejor, pero días después la intranet te da el veredicto.",
+        "requisitos": { "disciplina_minima": 0, "inteligencia_practica_minima": 0, "confianza_minima": 0, "energia_minima": 0 },
+        "consecuencias": { "modificar_disciplina": 0, "modificar_inteligencia_practica": -1, "modificar_confianza": -2, "modificar_energia": 0 }
+      }
+    ]
+  },
+  {
+    "id": "5_1",
+    "titulo": "El Golpe en el Orgullo",
+    "introduccion": "Tarde o temprano, las actas se actualizan.",
+    "narracion": "Subieron las notas de la última práctica grabada y el número en rojo es un golpe directo al estómago. No es lo que esperabas. Sientes el impulso de tirar la toalla, pero tienes que decidir cómo reaccionar ante la caída de tu promedio.",
+    "imagen": "escena_5_notas",
+    "es_final": false,
+    "decisiones": [
+      {
+        "texto": "Usar la mala nota como combustible para estudiar el doble",
+        "nodo_destino_id": "6_1",
+        "introduccion_destino": "Cierras la pestaña y decides que no regalarás el ciclo. Regresas a casa dispuesto a recuperar esos puntos como sea.",
+        "requisitos": { "disciplina_minima": 0, "inteligencia_practica_minima": 0, "confianza_minima": 2, "energia_minima": 0 },
+        "consecuencias": { "modificar_disciplina": 2, "modificar_inteligencia_practica": 0, "modificar_confianza": 1, "modificar_energia": -1 }
+      },
+      {
+        "texto": "Pedir resúmenes salvavidas a un amigo de ciclos superiores",
+        "nodo_destino_id": "5_FRIEND_NOTES",
+        "introduccion_destino": "Le escribes a tu amigo rogándole por sus apuntes. Te los envía en un PDF arcaico.",
+        "requisitos": { "disciplina_minima": 0, "inteligencia_practica_minima": 0, "confianza_minima": 0, "energia_minima": 0 },
+        "consecuencias": { "modificar_disciplina": -1, "modificar_inteligencia_practica": 0, "modificar_confianza": 1, "modificar_energia": 0 }
+      },
+      {
+        "texto": "Deprimirte, quejarte del profe y tirarte a dormir",
+        "nodo_destino_id": "6_ALT_B",
+        "introduccion_destino": "Te dejas vencer por la frustración. Apagas el celular y duermes 12 horas seguidas, ignorando que los finales continúan.",
+        "requisitos": { "disciplina_minima": 0, "inteligencia_practica_minima": 0, "confianza_minima": 0, "energia_minima": 0 },
+        "consecuencias": { "modificar_disciplina": -2, "modificar_inteligencia_practica": 0, "modificar_confianza": -2, "modificar_energia": 3 }
+      }
+    ]
+  },
+  {
+    "id": "5_FRIEND_NOTES",
+    "titulo": "Apuntes Desactualizados",
+    "introduccion": "Abres el PDF de tu pata de quinto ciclo.",
+    "narracion": "El resumen se ve increíble, todo está resaltado. Empiezas a memorizar las estructuras, pero te das cuenta de que el temario cambió el ciclo pasado. Estás estudiando librerías obsoletas y conceptos que el ingeniero actual ya no enseña.",
+    "imagen": "escena_5_apuntes_viejos",
+    "es_final": false,
+    "decisiones": [
+      {
+        "texto": "Desechar los apuntes y volver a tus propios cuadernos",
+        "nodo_destino_id": "6_1",
+        "introduccion_destino": "Aceptas que no hay atajos. Sacas tus hojas sueltas y te preparas para una noche larguísima.",
+        "requisitos": { "disciplina_minima": 0, "inteligencia_practica_minima": 0, "confianza_minima": 0, "energia_minima": 0 },
+        "consecuencias": { "modificar_disciplina": 1, "modificar_inteligencia_practica": -1, "modificar_confianza": 0, "modificar_energia": 0 }
+      }
+    ]
+  },
+  {
+    "id": "6_1",
+    "titulo": "Ojeras de Programador",
+    "introduccion": "La noche es larga cuando el código no compila.",
+    "narracion": "Son las 3:00 AM. La taza de café está vacía y tus ojos arden frente a la pantalla. El cansancio te pide a gritos que te vayas a dormir, pero sabes perfectamente que todavía quedan arquitecturas complejas que repasar para el examen de mañana.",
+    "imagen": "escena_6_madrugada",
+    "es_final": false,
+    "decisiones": [
+      {
+        "texto": "Soportar el sueño y repasar leyendo la documentación oficial",
+        "nodo_destino_id": "7_1",
+        "introduccion_destino": "Duermes apenas un par de horas, pero los conceptos se fijan bien en tu cabeza.",
+        "requisitos": { "disciplina_minima": 0, "inteligencia_practica_minima": 0, "confianza_minima": 0, "energia_minima": 0 },
+        "consecuencias": { "modificar_disciplina": 2, "modificar_inteligencia_practica": 1, "modificar_confianza": 0, "modificar_energia": -2 }
+      },
+      {
+        "texto": "Dejar que ChatGPT te resuma los temas y te explique rápido",
+        "nodo_destino_id": "6_GPT_CRUTCH",
+        "introduccion_destino": "Le tiras el temario a la IA. Te da un resumen bonito y sientes que entendiste todo en 10 minutos.",
+        "requisitos": { "disciplina_minima": 0, "inteligencia_practica_minima": 0, "confianza_minima": 0, "energia_minima": 0 },
+        "consecuencias": { "modificar_disciplina": -1, "modificar_inteligencia_practica": -1, "modificar_confianza": 2, "modificar_energia": 1 }
+      },
+      {
+        "texto": "Tomar un energizante extra y meterle un 'all-nighter' sin dormir",
+        "nodo_destino_id": "7_ALT_C",
+        "introduccion_destino": "Te atascas de cafeína. Tu cerebro absorbe datos como loco, pero tu corazón late a mil por hora y tus manos tiemblan.",
+        "requisitos": { "disciplina_minima": 0, "inteligencia_practica_minima": 0, "confianza_minima": 0, "energia_minima": 0 },
+        "consecuencias": { "modificar_disciplina": 1, "modificar_inteligencia_practica": 2, "modificar_confianza": 1, "modificar_energia": -4 }
+      }
+    ]
+  },
+  {
+    "id": "6_GPT_CRUTCH",
+    "titulo": "La Ilusión del Conocimiento",
+    "introduccion": "Te vas a dormir confiado, creyendo que dominas la materia.",
+    "narracion": "La IA te lo explicó tan simple que parecía fácil. Sin embargo, al despertar te das cuenta de que no sabes cómo implementar el código desde cero. Reconoces la teoría, pero tus manos no tienen memoria muscular para la sintaxis real.",
+    "imagen": "escena_6_chatgpt",
+    "es_final": false,
+    "decisiones": [
+      {
+        "texto": "Aceptar tu realidad e ir al laboratorio",
+        "nodo_destino_id": "7_1",
+        "introduccion_destino": "Llegas al laboratorio rogando que pongan preguntas de teoría y no de crear proyectos desde cero.",
+        "requisitos": { "disciplina_minima": 0, "inteligencia_practica_minima": 0, "confianza_minima": 0, "energia_minima": 0 },
+        "consecuencias": { "modificar_disciplina": 0, "modificar_inteligencia_practica": -1, "modificar_confianza": -1, "modificar_energia": 0 }
+      }
+    ]
+  },
+  {
+    "id": "6_ALT_B",
+    "titulo": "La Resignación del Caído",
+    "introduccion": "Despiertas tarde, con la mente entumecida.",
+    "narracion": "Faltan menos de 24 horas para el examen y no has abierto ni una sola diapositiva. El pánico empieza a reemplazar a tu flojera, pero el tiempo ya no se puede estirar. No hay atajos mágicos a estas alturas.",
+    "imagen": "escena_6_cama",
+    "es_final": false,
+    "decisiones": [
+      {
+        "texto": "Tratar de memorizar plantillas de código en un intento desesperado",
+        "nodo_destino_id": "7_1",
+        "introduccion_destino": "Intentas hacer un milagro de última hora. No entiendes casi nada, pero con esa fe suicida caminas directo al laboratorio.",
+        "requisitos": { "disciplina_minima": 0, "inteligencia_practica_minima": 0, "confianza_minima": 0, "energia_minima": 0 },
+        "consecuencias": { "modificar_disciplina": 0, "modificar_inteligencia_practica": -1, "modificar_confianza": -1, "modificar_energia": -1 }
+      }
+    ]
+  },
+  {
+    "id": "7_ALT_C",
+    "titulo": "Pantalla Azul Mental",
+    "introduccion": "El cuerpo siempre pasa factura.",
+    "narracion": "A mitad del examen, el exceso de cafeína y las cero horas de sueño te golpean. La pantalla empieza a borrarse, te da un sudor frío insoportable y las manos te tiemblan tanto que no puedes escribir la lógica. El ingeniero nota tu estado.",
+    "imagen": "escena_7_colapso",
+    "es_final": false,
+    "decisiones": [
+      {
+        "texto": "Ir al baño, mojarte la cara y terminar el examen a duras penas",
+        "nodo_destino_id": "8_1",
+        "introduccion_destino": "Logras estabilizar los temblores y entregas un código a medias. Sabes que perdiste puntos valiosos, pero sigues vivo.",
+        "requisitos": { "disciplina_minima": 0, "inteligencia_practica_minima": 0, "confianza_minima": 0, "energia_minima": -10 },
+        "consecuencias": { "modificar_disciplina": 0, "modificar_inteligencia_practica": -1, "modificar_confianza": -2, "modificar_energia": 1 }
+      }
+    ]
+  },
+  {
+    "id": "7_1",
+    "titulo": "Batalla Naval: Código",
+    "introduccion": "Llegó la hora cero. Todos en sus módulos.",
+    "narracion": "Día del primer examen final: Programación. El aula está en un silencio sepulcral. Te topas con una pregunta maldita que no se parece a nada de lo estudiado. El chico de tu izquierda (el chanconcito) está programando a la velocidad de la luz, y su monitor está muy visible.",
+    "imagen": "escena_7_examen",
+    "es_final": false,
+    "decisiones": [
+      {
+        "texto": "Respirar hondo, aislar el problema y desglosarlo sin mirar a nadie",
+        "nodo_destino_id": "8_1",
+        "introduccion_destino": "Tu integridad se mantiene intacta. Logras plantear la lógica justo a tiempo.",
+        "requisitos": { "disciplina_minima": 1, "inteligencia_practica_minima": 0, "confianza_minima": 0, "energia_minima": -2 },
+        "consecuencias": { "modificar_disciplina": 1, "modificar_inteligencia_practica": 1, "modificar_confianza": 1, "modificar_energia": -1 }
+      },
+      {
+        "texto": "Programar a lo bruto lo primero que se te ocurra para entregar rápido",
+        "nodo_destino_id": "7_RUSH_EXAM",
+        "introduccion_destino": "Ganas tiempo, pero tu código es un espagueti ilegible. Sabes que hay bugs.",
+        "requisitos": { "disciplina_minima": 0, "inteligencia_practica_minima": 0, "confianza_minima": 0, "energia_minima": 0 },
+        "consecuencias": { "modificar_disciplina": -1, "modificar_inteligencia_practica": -1, "modificar_confianza": 1, "modificar_energia": 0 }
+      },
+      {
+        "texto": "Ceder a la tentación y copiarle la función al chico de al lado",
+        "nodo_destino_id": "7_CHEAT_PEEK",
+        "introduccion_destino": "Estiras el cuello disimuladamente, pero el ingeniero te ha estado observando por el reflejo del vidrio. 'Chunga, cierre su sesión y acompáñeme', resuena en todo el laboratorio.",
+        "requisitos": { "disciplina_minima": -5, "inteligencia_practica_minima": 0, "confianza_minima": 0, "energia_minima": 0 },
+        "consecuencias": { "modificar_disciplina": -100, "modificar_inteligencia_practica": 0, "modificar_confianza": 0, "modificar_energia": 0 }
+      },
+      {
+        "texto": "Reescribir la lógica de cero confiando en tu memoria muscular (Requiere Inteligencia Práctica)",
+        "nodo_destino_id": "8_1",
+        "introduccion_destino": "Bebes de tu experiencia práctica. Escribes el código casi sin pensar y logras una solución óptima.",
+        "requisitos": { "disciplina_minima": 0, "inteligencia_practica_minima": 2, "confianza_minima": 0, "energia_minima": 0 },
+        "consecuencias": { "modificar_disciplina": 0, "modificar_inteligencia_practica": 2, "modificar_confianza": 1, "modificar_energia": -1 }
+      }
+    ]
+  },
+  {
+    "id": "7_CHEAT_PEEK",
+    "titulo": "La Caída en Desgracia",
+    "introduccion": "El silencio en el aula es absoluto mientras te levantas.",
+    "narracion": "Todo el mundo te mira. El ingeniero apaga tu máquina directamente desde el servidor maestro. Te informa que la copia en finales es causal de suspensión automática en Tecsup.",
+    "imagen": "escena_7_cheat",
+    "es_final": false,
+    "decisiones": [
+      {
+        "texto": "Caminar hacia la oficina de disciplina y asumir la culpa",
+        "nodo_destino_id": "15_EXPULSADO",
+        "introduccion_destino": "No hay vuelta atrás. Las reglas son claras.",
+        "requisitos": { "disciplina_minima": -10, "inteligencia_practica_minima": 0, "confianza_minima": 0, "energia_minima": 0 },
+        "consecuencias": { "modificar_disciplina": 0, "modificar_inteligencia_practica": 0, "modificar_confianza": 0, "modificar_energia": 0 }
+      },
+      {
+        "texto": "Intentar negar todo agresivamente culpando al compañero (Requiere baja disciplina y confianza)",
+        "nodo_destino_id": "15_EXPULSADO",
+        "introduccion_destino": "Haces un escándalo. Terminan llamando a seguridad y tu expediente queda marcado de por vida.",
+        "requisitos": { "disciplina_minima": -10, "inteligencia_practica_minima": 0, "confianza_minima": 1, "energia_minima": 0 },
+        "consecuencias": { "modificar_disciplina": -5, "modificar_inteligencia_practica": 0, "modificar_confianza": -5, "modificar_energia": 0 }
+      }
+    ]
+  },
+  {
+    "id": "7_RUSH_EXAM",
+    "titulo": "Velocidad sobre Calidad",
+    "introduccion": "Eres el primero en entregar y salir del laboratorio.",
+    "narracion": "Mientras caminas por el campus, empiezas a recordar líneas de tu código. Te das cuenta de que declaraste una variable global que seguramente va a crashear la evaluación del profesor. La ansiedad te carcome.",
+    "imagen": "escena_7_rush",
+    "es_final": false,
+    "decisiones": [
+      {
+        "texto": "Respirar profundo y mentalizarte para el siguiente curso",
+        "nodo_destino_id": "8_1",
+        "introduccion_destino": "Lo hecho, hecho está. Buscas distraerte antes del próximo choque.",
+        "requisitos": { "disciplina_minima": 0, "inteligencia_practica_minima": 0, "confianza_minima": 0, "energia_minima": 0 },
+        "consecuencias": { "modificar_disciplina": 0, "modificar_inteligencia_practica": 0, "modificar_confianza": -1, "modificar_energia": 0 }
+      },
+      {
+        "texto": "Regresar corriendo e intentar subir un hotfix antes de que cierre el sistema",
+        "nodo_destino_id": "8_1",
+        "introduccion_destino": "Llegas jadeando, convences al ingeniero y logras parchear la falla en los últimos 30 segundos.",
+        "requisitos": { "disciplina_minima": 0, "inteligencia_practica_minima": 0, "confianza_minima": 1, "energia_minima": 0 },
+        "consecuencias": { "modificar_disciplina": 0, "modificar_inteligencia_practica": 1, "modificar_confianza": -1, "modificar_energia": -2 }
+      }
+    ]
+  },
+  {
+    "id": "8_1",
+    "titulo": "Radio Pasillo",
+    "introduccion": "El verdadero estrés ocurre después de entregar la prueba.",
+    "narracion": "En el pasillo, el grupo de la clase debate las respuestas a gritos. '¡Salía un Optional!', grita uno. Ves a tu vro apoyado en la pared, con los ojos llorosos porque no logró compilar su proyecto a tiempo.",
+    "imagen": "escena_8_pasillo",
+    "es_final": false,
+    "decisiones": [
+      {
+        "texto": "Ignorar el debate y a tu amigo, ponerte los audífonos y enfocarte",
+        "nodo_destino_id": "9_1",
+        "introduccion_destino": "Te aíslas del drama. Entras directo al laboratorio de Base de Datos totalmente frío y calculador.",
+        "requisitos": { "disciplina_minima": 0, "inteligencia_practica_minima": 0, "confianza_minima": 0, "energia_minima": 0 },
+        "consecuencias": { "modificar_disciplina": 1, "modificar_inteligencia_practica": 0, "modificar_confianza": 1, "modificar_energia": 0 }
+      },
+      {
+        "texto": "Acercarte a consolar a tu vro y darle ánimos",
+        "nodo_destino_id": "8_HELP_FRIEND",
+        "introduccion_destino": "Le invitas una botella de agua y le ayudas a calmarse. Pierdes tiempo de repaso mental, pero te sientes buena persona.",
+        "requisitos": { "disciplina_minima": 0, "inteligencia_practica_minima": 0, "confianza_minima": 0, "energia_minima": 0 },
+        "consecuencias": { "modificar_disciplina": 0, "modificar_inteligencia_practica": 0, "modificar_confianza": 2, "modificar_energia": -1 }
+      },
+      {
+        "texto": "Aprovechar el drama para repasar tus apuntes en el celular caminando",
+        "nodo_destino_id": "9_1",
+        "introduccion_destino": "Esquivas las lágrimas de los demás. Refrescas un par de queries en tu mente justo antes de entrar.",
+        "requisitos": { "disciplina_minima": 1, "inteligencia_practica_minima": 0, "confianza_minima": 0, "energia_minima": 0 },
+        "consecuencias": { "modificar_disciplina": 1, "modificar_inteligencia_practica": 1, "modificar_confianza": 0, "modificar_energia": 0 }
+      }
+    ]
+  },
+  {
+    "id": "8_HELP_FRIEND",
+    "titulo": "Puntos de Karma",
+    "introduccion": "Tu amigo se limpia la cara y respira mejor.",
+    "narracion": "'Gracias, Chunga, de verdad', te dice. Al ayudarlo a bajar su ansiedad, paradójicamente sientes que tus propios nervios desaparecen. Puede que tengas menos tiempo para prepararte, pero tu moral está altísima.",
+    "imagen": "escena_8_karma",
+    "es_final": false,
+    "decisiones": [
+      {
+        "texto": "Despedirte a tiempo y entrar al siguiente laboratorio",
+        "nodo_destino_id": "9_1",
+        "introduccion_destino": "Con la cabeza en alto, cruzas la puerta del infierno de SQL.",
+        "requisitos": { "disciplina_minima": 0, "inteligencia_practica_minima": 0, "confianza_minima": 0, "energia_minima": 0 },
+        "consecuencias": { "modificar_disciplina": 0, "modificar_inteligencia_practica": 0, "modificar_confianza": 0, "modificar_energia": 0 }
+      },
+      {
+        "texto": "Quedarte hablando con él y llegar tarde al examen por ser buen amigo (Requiere Confianza)",
+        "nodo_destino_id": "9_1",
+        "introduccion_destino": "Llegas 10 minutos tarde al examen de BD. El ingeniero te deja entrar, pero perdiste tiempo valioso.",
+        "requisitos": { "disciplina_minima": 0, "inteligencia_practica_minima": 0, "confianza_minima": 1, "energia_minima": 0 },
+        "consecuencias": { "modificar_disciplina": -1, "modificar_inteligencia_practica": -2, "modificar_confianza": 3, "modificar_energia": 0 }
+      }
+    ]
+  },
+  {
+    "id": "9_1",
+    "titulo": "El Monstruo de las Subconsultas",
+    "introduccion": "No hay descanso para el desarrollador.",
+    "narracion": "Examen de Base de Datos. El monitor te escupe un enunciado monstruoso que exige anidar múltiples JOINs, HAVING y subconsultas correlacionadas. El servidor de prueba se pone lento y los minutos vuelan. Parece un laberinto sin salida.",
+    "imagen": "escena_9_sql",
+    "es_final": false,
+    "decisiones": [
+      {
+        "texto": "Construir la query por partes, desde lo interno hacia afuera",
+        "nodo_destino_id": "10_1",
+        "introduccion_destino": "Estructuras la consulta con paciencia. La BD devuelve los registros correctos. Cierras la sesión aliviado.",
+        "requisitos": { "disciplina_minima": 0, "inteligencia_practica_minima": 5, "confianza_minima": 0, "energia_minima": 2 },
+        "consecuencias": { "modificar_disciplina": 1, "modificar_inteligencia_practica": 2, "modificar_confianza": 1, "modificar_energia": -1 }
+      },
+      {
+        "texto": "Hacer un select a todo y aplicar fuerza bruta (Cruzar los dedos)",
+        "nodo_destino_id": "9_BRUTE_FORCE",
+        "introduccion_destino": "Ejecutas una query masiva súper ineficiente. El servidor se queda colgado evaluando tu consulta.",
+        "requisitos": { "disciplina_minima": 0, "inteligencia_practica_minima": 0, "confianza_minima": 0, "energia_minima": 0 },
+        "consecuencias": { "modificar_disciplina": -1, "modificar_inteligencia_practica": -2, "modificar_confianza": 0, "modificar_energia": -1 }
+      },
+      {
+        "texto": "Rendirte y dejar la pregunta más difícil en blanco",
+        "nodo_destino_id": "9_GIVE_UP",
+        "introduccion_destino": "Te bloqueas por completo. Apagas el monitor y entregas el examen vacío en esa sección.",
+        "requisitos": { "disciplina_minima": 0, "inteligencia_practica_minima": 0, "confianza_minima": 0, "energia_minima": 0 },
+        "consecuencias": { "modificar_disciplina": -2, "modificar_inteligencia_practica": -2, "modificar_confianza": -3, "modificar_energia": 0 }
+      }
+    ]
+  },
+  {
+    "id": "9_BRUTE_FORCE",
+    "titulo": "El Servidor Llora",
+    "introduccion": "El icono de carga sigue dando vueltas.",
+    "narracion": "Tu consulta ineficiente ha provocado un cuello de botella en el servidor local de tu módulo. El ingeniero suspira detrás de ti. Te pone medio puntaje porque los datos salieron, pero destruiste la optimización.",
+    "imagen": "escena_9_brute",
+    "es_final": false,
+    "decisiones": [
+      {
+        "texto": "Retirarte en silencio",
+        "nodo_destino_id": "10_1",
+        "introduccion_destino": "Sales arrastrando los pies hacia el receso.",
+        "requisitos": { "disciplina_minima": 0, "inteligencia_practica_minima": 0, "confianza_minima": 0, "energia_minima": 0 },
+        "consecuencias": { "modificar_disciplina": 0, "modificar_inteligencia_practica": 0, "modificar_confianza": -1, "modificar_energia": 0 }
+      },
+      {
+        "texto": "Discutir con el ingeniero intentando justificar tu código espagueti (Requiere Confianza)",
+        "nodo_destino_id": "10_1",
+        "introduccion_destino": "Intentas venderle que 'al final los datos cargan'. Él te resta puntos de actitud por terco.",
+        "requisitos": { "disciplina_minima": 0, "inteligencia_practica_minima": 0, "confianza_minima": 5, "energia_minima": 0 },
+        "consecuencias": { "modificar_disciplina": -2, "modificar_inteligencia_practica": 0, "modificar_confianza": -2, "modificar_energia": 0 }
+      }
+    ]
+  },
+  {
+    "id": "9_GIVE_UP",
+    "titulo": "La Hoja en Blanco",
+    "introduccion": "La peor sensación para un estudiante.",
+    "narracion": "Sientes que acabas de tirar a la basura todo el curso de Base de Datos. La desmotivación amenaza con arruinar tu desempeño en los exámenes que faltan hoy.",
+    "imagen": "escena_9_blanco",
+    "es_final": false,
+    "decisiones": [
+      {
+        "texto": "Buscar fuerzas de donde sea para continuar",
+        "nodo_destino_id": "10_1",
+        "introduccion_destino": "Te sacudes la tristeza. Ya fallaste una, no puedes fallar las demás.",
+        "requisitos": { "disciplina_minima": 0, "inteligencia_practica_minima": 0, "confianza_minima": 0, "energia_minima": 0 },
+        "consecuencias": { "modificar_disciplina": 1, "modificar_inteligencia_practica": 0, "modificar_confianza": 0, "modificar_energia": -1 }
+      },
+      {
+        "texto": "Ir al baño a lavarte la cara y llorar un poco de frustración",
+        "nodo_destino_id": "10_1",
+        "introduccion_destino": "Sueltas todo el estrés acumulado. Tus ojos están rojos, pero te sientes un poco más ligero para seguir.",
+        "requisitos": { "disciplina_minima": 0, "inteligencia_practica_minima": 0, "confianza_minima": 0, "energia_minima": 0 },
+        "consecuencias": { "modificar_disciplina": 0, "modificar_inteligencia_practica": 0, "modificar_confianza": -1, "modificar_energia": 1 }
+      }
+    ]
+  },
+  {
+    "id": "10_1",
+    "titulo": "Al Límite del Burnout",
+    "introduccion": "Las batallas se ganan, pero la guerra continúa.",
+    "narracion": "Llevas días durmiendo poquísimo y comiendo apurado. Te cuesta concentrarte en tareas simples y el dolor de cabeza te avisa que juegas con fuego. Tienes un receso largo antes del examen de Redes y necesitas administrar tus últimas fuerzas.",
+    "imagen": "escena_10_cansancio",
+    "es_final": false,
+    "decisiones": [
+      {
+        "texto": "Ir a los sofás de la biblioteca a dormir una siesta express",
+        "nodo_destino_id": "11_1",
+        "introduccion_destino": "Pones una alarma de 40 minutos. Despiertas atontado pero tu cerebro se reseteó un poco.",
+        "requisitos": { "disciplina_minima": 0, "inteligencia_practica_minima": 0, "confianza_minima": 0, "energia_minima": 0 },
+        "consecuencias": { "modificar_disciplina": 1, "modificar_inteligencia_practica": 0, "modificar_confianza": 0, "modificar_energia": 3 }
+      },
+      {
+        "texto": "Forzar la máquina y quedarte repasando apuntes sin descanso (Requiere algo de Energía)",
+        "nodo_destino_id": "11_1",
+        "introduccion_destino": "Estudiaste, sí, pero entras al examen de Redes sintiendo que vas a colapsar en cualquier momento.",
+        "requisitos": { "disciplina_minima": 0, "inteligencia_practica_minima": 0, "confianza_minima": 0, "energia_minima": 2 },
+        "consecuencias": { "modificar_disciplina": 0, "modificar_inteligencia_practica": 1, "modificar_confianza": -1, "modificar_energia": -3 }
+      },
+      {
+        "texto": "Bajar a la cafetería, empujarte una salchipapa doble y un RedBull",
+        "nodo_destino_id": "10_JUNK_FOOD",
+        "introduccion_destino": "La grasa y el azúcar te dan un subidón de energía falso que dura exactamente 20 minutos...",
+        "requisitos": { "disciplina_minima": 0, "inteligencia_practica_minima": 0, "confianza_minima": 0, "energia_minima": 0 },
+        "consecuencias": { "modificar_disciplina": -1, "modificar_inteligencia_practica": 0, "modificar_confianza": 1, "modificar_energia": -2 }
+      }
+    ]
+  },
+  {
+    "id": "10_JUNK_FOOD",
+    "titulo": "La Traición del Estómago",
+    "introduccion": "El cuerpo humano no es una máquina, vro.",
+    "narracion": "Mientras entras al laboratorio de Redes, el combo letal de estrés y comida pesada te pasa factura. Sientes una punzada en el estómago y náuseas. Tu concentración se va al tacho intentando no vomitar frente al rack de servidores.",
+    "imagen": "escena_10_comida",
+    "es_final": false,
+    "decisiones": [
+      {
+        "texto": "Apretar los dientes y sentarte frente a la PC",
+        "nodo_destino_id": "11_1",
+        "introduccion_destino": "Con sudores fríos, abres el Cisco Packet Tracer.",
+        "requisitos": { "disciplina_minima": 0, "inteligencia_practica_minima": 0, "confianza_minima": 0, "energia_minima": 0 },
+        "consecuencias": { "modificar_disciplina": 1, "modificar_inteligencia_practica": -1, "modificar_confianza": 0, "modificar_energia": -1 }
+      },
+      {
+        "texto": "Correr al tópico y perderte los primeros minutos del examen",
+        "nodo_destino_id": "11_1",
+        "introduccion_destino": "El médico te da unas pastillas. Regresas al examen sintiéndote mejor, pero con el tiempo en contra.",
+        "requisitos": { "disciplina_minima": 0, "inteligencia_practica_minima": 0, "confianza_minima": 0, "energia_minima": 2 },
+        "consecuencias": { "modificar_disciplina": -1, "modificar_inteligencia_practica": -2, "modificar_confianza": 0, "modificar_energia": 1 }
+      }
+    ]
+  },
+  {
+    "id": "11_1",
+    "titulo": "Subneteo Sangriento",
+    "introduccion": "Llegó el terror de muchos estudiantes.",
+    "narracion": "Examen de Redes. Te entregan una topología enorme con direccionamiento VLSM. El tiempo corre como loco y hay preguntas de teoría que parecen sacadas de un manual de certificación. Si te congelas en la configuración de los routers, no llegarás a la parte de enrutamiento.",
+    "imagen": "escena_11_redes",
+    "es_final": false,
+    "decisiones": [
+      {
+        "texto": "Asegurar los puntos respondiendo primero la teoría y rutas fáciles (Requiere Disciplina)",
+        "nodo_destino_id": "12_1",
+        "introduccion_destino": "La estrategia funciona. Aseguras la mitad del examen y logras sobrevivir. La presión no disminuye, pero sigues en carrera.",
+        "requisitos": { "disciplina_minima": 1, "inteligencia_practica_minima": 0, "confianza_minima": 0, "energia_minima": 0 },
+        "consecuencias": { "modificar_disciplina": 1, "modificar_inteligencia_practica": 1, "modificar_confianza": 1, "modificar_energia": -1 }
+      },
+      {
+        "texto": "Atacar de frente el subneteo VLSM complejo para salir de lo peor (Requiere Inteligencia Práctica)",
+        "nodo_destino_id": "11_VLSM_FIRST",
+        "introduccion_destino": "Te enredas con las máscaras de red. Empiezas a tachar y borrar números en tu hoja de cálculos...",
+        "requisitos": { "disciplina_minima": 0, "inteligencia_practica_minima": 3, "confianza_minima": 0, "energia_minima": 0 },
+        "consecuencias": { "modificar_disciplina": 0, "modificar_inteligencia_practica": -1, "modificar_confianza": -2, "modificar_energia": -2 }
+      }
+    ]
+  },
+  {
+    "id": "11_VLSM_FIRST",
+    "titulo": "Atrapado en la Red",
+    "introduccion": "Calculaste mal un bit y todo el esquema se vino abajo.",
+    "narracion": "Cuando terminas el subneteo y levantas la mirada, te das cuenta de que el examen termina en 10 minutos. Has dejado toda la teoría en blanco y tus routers ni siquiera tienen las IPs asignadas.",
+    "imagen": "escena_11_vlsm",
+    "es_final": false,
+    "decisiones": [
+      {
+        "texto": "Llenar al champazo (azar) lo que puedas",
+        "nodo_destino_id": "12_1",
+        "introduccion_destino": "Entregas el examen destrozado por dentro. Dependes de un milagro de la física cuántica para aprobar.",
+        "requisitos": { "disciplina_minima": 0, "inteligencia_practica_minima": 0, "confianza_minima": 0, "energia_minima": 0 },
+        "consecuencias": { "modificar_disciplina": 0, "modificar_inteligencia_practica": 0, "modificar_confianza": -2, "modificar_energia": -1 }
+      },
+      {
+        "texto": "Revisar línea por línea tratando de encontrar el error (Requiere algo de Energía)",
+        "nodo_destino_id": "12_1",
+        "introduccion_destino": "No encuentras el bug a tiempo. Tu red no hace ping, pero al menos el profe verá que la lógica iba bien.",
+        "requisitos": { "disciplina_minima": 0, "inteligencia_practica_minima": 0, "confianza_minima": 0, "energia_minima": 0 },
+        "consecuencias": { "modificar_disciplina": 1, "modificar_inteligencia_practica": 1, "modificar_confianza": -2, "modificar_energia": -2 }
+      }
+    ]
+  },
+  {
+    "id": "12_1",
+    "titulo": "La Última Trinchera",
+    "introduccion": "Últimas 24 horas del ciclo.",
+    "narracion": "Has sobrevivido hasta ahora. Tu cabeza es una licuadora de scripts, comandos y patrones de SwiftUI. Queda el jefe final: Desarrollo Móvil. Mirando tutoriales en YouTube, encuentras un nuevo framework que hace las vistas 10 veces más rápido, pero no lo han enseñado en clase.",
+    "imagen": "escena_12_apuntes",
+    "es_final": false,
+    "decisiones": [
+      {
+        "texto": "Ignorar el tutorial y consolidar tus apuntes de clase tradicionales (Requiere Disciplina)",
+        "nodo_destino_id": "13_1",
+        "introduccion_destino": "Cierras los cuadernos y dejas que los conceptos sólidos se asienten. Mañana es el gran día.",
+        "requisitos": { "disciplina_minima": 1, "inteligencia_practica_minima": 0, "confianza_minima": 4, "energia_minima": 0 },
+        "consecuencias": { "modificar_disciplina": 2, "modificar_inteligencia_practica": 0, "modificar_confianza": 1, "modificar_energia": 0 }
+      },
+      {
+        "texto": "Amanecerte intentando aprender el nuevo framework para impresionar",
+        "nodo_destino_id": "12_NEW_FW",
+        "introduccion_destino": "Pésima idea. Metes librerías que entran en conflicto con las versiones de Xcode del instituto.",
+        "requisitos": { "disciplina_minima": 0, "inteligencia_practica_minima": 0, "confianza_minima": 0, "energia_minima": 0 },
+        "consecuencias": { "modificar_disciplina": -1, "modificar_inteligencia_practica": 2, "modificar_confianza": -1, "modificar_energia": -1 }
+      }
+    ]
+  },
+  {
+    "id": "12_NEW_FW",
+    "titulo": "Caos de Dependencias",
+    "introduccion": "La innovación a veces es el enemigo del progreso.",
+    "narracion": "Al intentar usar tu framework nuevo, te das cuenta de que no sabes cómo integrarlo con la arquitectura MVVM que exige el profesor. Ahora tienes dos lógicas mezcladas en tu cabeza y cero dominio sobre cualquiera de las dos.",
+    "imagen": "escena_12_framework",
+    "es_final": false,
+    "decisiones": [
+      {
+        "texto": "Olvidar el invento y regresar a lo básico",
+        "nodo_destino_id": "13_1",
+        "introduccion_destino": "Perdiste horas valiosas, pero al menos vas al examen con lo mínimo funcional en mente.",
+        "requisitos": { "disciplina_minima": 0, "inteligencia_practica_minima": 0, "confianza_minima": 0, "energia_minima": 0 },
+        "consecuencias": { "modificar_disciplina": 0, "modificar_inteligencia_practica": 0, "modificar_confianza": -1, "modificar_energia": 0 }
+      },
+      {
+        "texto": "Usar ChatGPT para que te arregle el framework de madrugada",
+        "nodo_destino_id": "13_1",
+        "introduccion_destino": "Cargas código que ni entiendes. Funciona en tu laptop, pero cruzas los dedos para que compile en la Mac del lab.",
+        "requisitos": { "disciplina_minima": 0, "inteligencia_practica_minima": 0, "confianza_minima": 0, "energia_minima": 0 },
+        "consecuencias": { "modificar_disciplina": -1, "modificar_inteligencia_practica": -1, "modificar_confianza": 1, "modificar_energia": -1 }
+      }
+    ]
+  },
+  {
+    "id": "13_1",
+    "titulo": "Juicio Final en el Laboratorio",
+    "introduccion": "El ambiente se siente definitivo.",
+    "narracion": "Examen final de Móviles. El mismo ingeniero que te pilló distraído la primera semana camina entre las filas, vigilando cada pantalla de Xcode. Abres el proyecto base. Todo tu ciclo se reduce a que este código compile y muestre datos de la API.",
+    "imagen": "escena_13_moviles",
+    "es_final": false,
+    "decisiones": [
+      {
+        "texto": "Ejecutar el simulador paso a paso, usando la arquitectura exigida (Requiere Disciplina y Energía)",
+        "nodo_destino_id": "14_1",
+        "introduccion_destino": "Compilas y la app corre sin crasheos. Subes el repositorio a GitHub y dejas atrás el laboratorio.",
+        "requisitos": { "disciplina_minima": 4, "inteligencia_practica_minima": 0, "confianza_minima": 0, "energia_minima": 4 },
+        "consecuencias": { "modificar_disciplina": 0, "modificar_inteligencia_practica": 2, "modificar_confianza": 2, "modificar_energia": -1 }
+      },
+      {
+        "texto": "Entrar en pánico y cambiar toda la lógica porque sale un warning",
+        "nodo_destino_id": "13_PANIC_ARCH",
+        "introduccion_destino": "El error más novato. Rompes lo que sí funcionaba a 5 minutos del cierre del examen.",
+        "requisitos": { "disciplina_minima": 0, "inteligencia_practica_minima": 0, "confianza_minima": 0, "energia_minima": 0 },
+        "consecuencias": { "modificar_disciplina": -1, "modificar_inteligencia_practica": -3, "modificar_confianza": -3, "modificar_energia": -1 }
+      },
+      {
+        "texto": "Revisar la documentación oficial en el iPad antes de picar una sola línea (Requiere Inteligencia y Disciplina)",
+        "nodo_destino_id": "14_1",
+        "introduccion_destino": "Esquivas una trampa del código base. Armas las vistas impecablemente y entregas sobrado de tiempo.",
+        "requisitos": { "disciplina_minima": 1, "inteligencia_practica_minima": 1, "confianza_minima": 3, "energia_minima": 0 },
+        "consecuencias": { "modificar_disciplina": 1, "modificar_inteligencia_practica": 3, "modificar_confianza": 2, "modificar_energia": -1 }
+      }
+    ]
+  },
+  {
+    "id": "13_PANIC_ARCH",
+    "titulo": "Fatal Error: Index out of range",
+    "introduccion": "El simulador se cierra bruscamente.",
+    "narracion": "La temida pantalla roja de Xcode inunda tu código. Rompiste la navegación principal intentando arreglar un texto mal centrado. El sistema se bloquea y el tiempo se acaba. Entregas un proyecto que crashea al iniciar.",
+    "imagen": "escena_13_crash",
+    "es_final": false,
+    "decisiones": [
+      {
+        "texto": "Salir del laboratorio destruido",
+        "nodo_destino_id": "14_1",
+        "introduccion_destino": "La peor despedida posible del campus.",
+        "requisitos": { "disciplina_minima": 0, "inteligencia_practica_minima": 0, "confianza_minima": 0, "energia_minima": 0 },
+        "consecuencias": { "modificar_disciplina": 0, "modificar_inteligencia_practica": 0, "modificar_confianza": -2, "modificar_energia": 0 }
+      },
+      {
+        "texto": "Hacer un 'Git Revert' desesperado a tu commit anterior",
+        "nodo_destino_id": "14_1",
+        "introduccion_destino": "Logras recuperar la versión funcional justo cuando el ingeniero bloquea las máquinas. Pierdes puntos por diseño, pero salva compilar.",
+        "requisitos": { "disciplina_minima": 0, "inteligencia_practica_minima": 0, "confianza_minima": 0, "energia_minima": 0 },
+        "consecuencias": { "modificar_disciplina": 0, "modificar_inteligencia_practica": 1, "modificar_confianza": 1, "modificar_energia": 1 }
+      }
+    ]
+  },
+  {
+    "id": "14_1",
+    "titulo": "La Agonía de la Intranet",
+    "introduccion": "El silencio después de la guerra.",
+    "narracion": "Se acabó. Las aulas se vaciaron. Ya no puedes corregir ninguna consulta ni sumar un solo punto. Estás en tu cuarto frente a la laptop. Solo te queda actualizar la página de notas de la intranet de Tecsup mientras el servidor procesa las actas finales. La ansiedad es insoportable.",
+    "imagen": "escena_14_intranet",
+    "es_final": false,
+    "decisiones": [
+      
+      {
+        "texto": "Dar F5 y revelar tu destino (Si fuiste un Dios del Código)",
+        "nodo_destino_id": "15_DIOS",
+        "introduccion_destino": "",
+        "requisitos": {"min":9.1, "max":10 },
+        "consecuencias": { "modificar_disciplina": 0, "modificar_inteligencia_practica": 0, "modificar_confianza": 0, "modificar_energia": 0 }
+      },
+      {
+        "texto": "Dar F5 y revelar tu destino (Si fuiste disciplinado y estudiaste)",
+        "nodo_destino_id": "15_CANON",
+        "introduccion_destino": "",
+        "requisitos": {"min":7.1, "max":9 },
+        "consecuencias": { "modificar_disciplina": 0, "modificar_inteligencia_practica": 0, "modificar_confianza": 0, "modificar_energia": 0 }
+      },
+      {
+        "texto": "Dar F5 y revelar tu destino (Si colapsaste pero sobreviviste)",
+        "nodo_destino_id": "15_BURNOUT",
+        "introduccion_destino": "",
+        "requisitos": {"min":4.1, "max":7 },
+        "consecuencias": { "modificar_disciplina": 0, "modificar_inteligencia_practica": 0, "modificar_confianza": 0, "modificar_energia": 0 }
+      },
+      {
+        "texto": "Dar F5 y revelar tu destino (Si procrastinaste y te rendiste)",
+        "nodo_destino_id": "15_TRIQUI",
+        "introduccion_destino": "",
+        "requisitos": {"min":0, "max":3 },
+        "consecuencias": { "modificar_disciplina": 0, "modificar_inteligencia_practica": 0, "modificar_confianza": 0, "modificar_energia": 0 }
+      }
+    ]
+  },
+  
+  {
+    "id": "15_DIOS",
+    "titulo": "La Leyenda de Tecsup (Final MVP)",
+    "introduccion": "El portal carga y parece que hubiera un error de sistema...",
+    "narracion": "¡Tus notas están en 19 y 20! Eres el primer puesto de la carrera. No solo dominaste la presión, la disciplina y las trasnochadas, sino que ayudaste a tus amigos y demostraste de qué estás hecho. Hasta el profesor más duro te manda un correo felicitándote. Eres un dios del código, vro.",
+    "imagen": "escena_15_dios",
+    "es_final": true,
+    "decisiones": []
+  },
+  {
+    "id": "15_CANON",
+    "titulo": "Héroe de Tecsup (Final Bueno)",
+    "introduccion": "El portal carga por completo y tus ojos van directo al promedio.",
+    "narracion": "¡Aprobado en todo! No habrás sacado el primer puesto histórico, pero venciste al sistema. Tras semanas de estrés, lograste salir invicto. Tu madre te pregunta desde la cocina cómo te fue. Sonríes aliviado y respondes: 'Seguimos vivos, mamá'. Has dominado Tecsup con disciplina pura.",
+    "imagen": "escena_15_aprobado",
+    "es_final": true,
+    "decisiones": []
+  },
+  {
+    "id": "15_BURNOUT",
+    "titulo": "Superviviente Roto (Final Gris)",
+    "introduccion": "El portal se renderiza lentamente. Tienes miedo de mirar.",
+    "narracion": "Aprobaste Móviles y Base de Datos, pero el 10 rojo en Redes te destruye la vista. Te vas a bica en un curso. Salvaste el año y no te botan, pero el costo físico y mental fue altísimo. Te tiras a la cama sintiendo que ganaste la batalla, pero perdiste tu salud en el intento.",
+    "imagen": "escena_15_gris",
+    "es_final": true,
+    "decisiones": []
+  },
+  {
+    "id": "15_TRIQUI",
+    "titulo": "El Fin del Camino (Final Malo)",
+    "introduccion": "Los círculos de carga giran y el sistema te escupe tu realidad.",
+    "narracion": "Programación: Reprobado. Redes: Reprobado. Móviles: 08. La pantalla se llena de rojo sangriento. Las trasnochadas jugando, la resaca y la falta de disciplina te pasaron una factura impagable. Toca afrontar las consecuencias, explicarle a tus padres el desastre y pagar el ciclo extraordinario. Game Over, vro.",
+    "imagen": "escena_15_jalado",
+    "es_final": true,
+    "decisiones": []
+  },
+  {
+    "id": "15_EXPULSADO",
+    "titulo": "Deshonra Académica (Final Oculto)",
+    "introduccion": "No llegaste ni a abrir la intranet.",
+    "narracion": "Una falta ética grave en Tecsup no se perdona. Fuiste sorprendido copiando en pleno examen final. Te anulan todas las pruebas, repruebas automáticamente todos los cursos del bloque y recibes una suspensión formal de la institución. Elegiste el atajo, y el sistema te devoró sin piedad.",
+    "imagen": "escena_15_expulsado",
+    "es_final": true,
+    "decisiones": []
+  }
+]

@@ -2,6 +2,8 @@ import Foundation
 
 struct GameScene: Identifiable, Codable {
     let id: String
+    let title: String?
+    let introduction: String?
     let characterName: String?
     let dialogue: String
     let backgroundImage: String
@@ -10,12 +12,15 @@ struct GameScene: Identifiable, Codable {
     let musicTrack: String?
     let timeLimit: Double?
     let endingTitle: String?
+    
     var displayNameForEnding: String {
-        return endingTitle ?? "Final"
+        return endingTitle ?? title ?? "Final"
     }
     
     init(
         id: String,
+        title: String? = nil,
+        introduction: String? = nil,
         characterName: String? = nil,
         dialogue: String,
         backgroundImage: String,
@@ -26,6 +31,8 @@ struct GameScene: Identifiable, Codable {
         endingTitle: String? = nil
     ) {
         self.id = id
+        self.title = title
+        self.introduction = introduction
         self.characterName = characterName
         self.dialogue = dialogue
         self.backgroundImage = backgroundImage
@@ -36,4 +43,3 @@ struct GameScene: Identifiable, Codable {
         self.endingTitle = endingTitle
     }
 }
-

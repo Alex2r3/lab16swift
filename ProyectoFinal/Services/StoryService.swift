@@ -239,35 +239,23 @@ struct StoryProgress: Codable {
 }
 
 // MARK: - JSON Decodable Helpers
-struct JSONStory: Decodable {
-    let title: String
-    let description: String
-    let coverImage: String
-    let genre: String
-    let duration: String
-    let initialSceneKey: String
-    let scenes: [String: JSONScene]
-}
-
-struct JSONScene: Decodable {
-    let characterName: String?
-    let dialogue: String
-    let backgroundImage: String
-    let musicTrack: String?
-    let timeLimit: Double?
-    let isEnding: Bool?
-    let choices: [JSONChoice]?
+struct JSONNode: Decodable {
+    let id: String
+    let titulo: String?
+    let introduccion: String?
+    let narracion: String?
+    let imagen: String?
+    let es_final: Bool?
+    let decisiones: [JSONDecision]?
     let endingTitle: String?
 }
 
-struct JSONChoice: Decodable {
-    let text: String
-    let targetSceneKey: String
-    let isBest: Bool?
-    let isWorst: Bool?
-    let trustImpact: Int?
-    let braveryImpact: Int?
-    let humanityImpact: Int?
+struct JSONDecision: Decodable {
+    let texto: String
+    let nodo_destino_id: String
+    let introduccion_destino: String?
+    let requisitos: Requisitos?
+    let consecuencias: Consecuencias?
 }
 
 // MARK: - Story Service
@@ -275,82 +263,62 @@ class StoryService {
     static func loadAllStories() -> [Story] {
         var stories: [Story] = []
         
-        // 1. Cargar archivos JSON del bundle
-        let paths = Bundle.main.paths(forResourcesOfType: "json", inDirectory: nil)
-        for path in paths {
-            if let story = parseStory(fromFile: path) {
-                stories.append(story)
-            }
-        }
-        
         let mediaPaths = Bundle.main.paths(forResourcesOfType: "json", inDirectory: "Media")
         for path in mediaPaths {
-            if let story = parseStory(fromFile: path) {
-                stories.append(story)
-            }
-        }
-        
-        // Evitar duplicados por título
-        var uniqueStories: [Story] = []
-        for story in stories {
-            if !uniqueStories.contains(where: { $0.title == story.title }) {
-                uniqueStories.append(story)
+            if path.hasSuffix("historias.json") {
+                if let story = parseHistorias(fromFile: path) {
+                    stories.append(story)
+                }
             }
         }
         
         // Fallback si no hay JSONs
-        if uniqueStories.isEmpty {
-            uniqueStories.append(getElUltimoFaro())
-        }
-        
-        return uniqueStories
+        // Fallback si no hay JSONs, devolver arreglo vacío
+        return stories
     }
     
-    static func parseStory(fromFile path: String) -> Story? {
+    static func parseHistorias(fromFile path: String) -> Story? {
         guard let data = try? Data(contentsOf: URL(fileURLWithPath: path)) else {
             return nil
         }
         do {
-            let jsonStory = try JSONDecoder().decode(JSONStory.self, from: data)
-            return mapJSONStoryToStory(jsonStory)
+            let decoder = JSONDecoder()
+            let nodes = try decoder.decode([JSONNode].self, from: data)
+            return mapNodesToStory(nodes)
         } catch {
-            print("Error parseando historia en \(path): \(error)")
+            print("Error parseando historias.json en \(path): \(error)")
             return nil
         }
     }
     
-    private static func mapJSONStoryToStory(_ jsonStory: JSONStory) -> Story? {
+    private static func mapNodesToStory(_ nodes: [JSONNode]) -> Story? {
         var scenes: [GameScene] = []
         
-        for (key, js) in jsonStory.scenes {
+        for node in nodes {
             var choices: [Choice] = []
-            if let jcList = js.choices {
-                for jc in jcList {
+            if let decisiones = node.decisiones {
+                for dec in decisiones {
                     let choice = Choice(
-                        text: jc.text,
-                        targetSceneID: jc.targetSceneKey,
-                        isCritical: (jc.isBest ?? false) || (jc.isWorst ?? false),
-                        timeLimit: js.timeLimit,
-                        isBest: jc.isBest ?? false,
-                        isWorst: jc.isWorst ?? false,
-                        trust: jc.trustImpact ?? 0,
-                        bravery: jc.braveryImpact ?? 0,
-                        humanity: jc.humanityImpact ?? 0
+                        text: dec.texto,
+                        targetSceneID: dec.nodo_destino_id,
+                        introduccionDestino: dec.introduccion_destino,
+                        requisitos: dec.requisitos,
+                        consecuencias: dec.consecuencias
                     )
                     choices.append(choice)
                 }
             }
             
             let scene = GameScene(
-                id: key,
-                characterName: js.characterName,
-                dialogue: js.dialogue,
-                backgroundImage: js.backgroundImage,
+                id: node.id,
+                title: node.titulo,
+                introduction: node.introduccion,
+                characterName: nil, // Ya no se usa
+                dialogue: node.narracion ?? "",
+                backgroundImage: node.imagen ?? "default_bg",
                 choices: choices,
-                isEnding: js.isEnding ?? false,
-                musicTrack: js.musicTrack,
-                timeLimit: js.timeLimit,
-                endingTitle: js.endingTitle
+                isEnding: node.es_final ?? false,
+                endingTitle: node.titulo
             )
             scenes.append(scene)
         }
@@ -358,145 +326,15 @@ class StoryService {
         if scenes.isEmpty { return nil }
         
         return Story(
-            id: jsonStory.title,
-            title: jsonStory.title,
-            description: jsonStory.description,
-            coverImage: jsonStory.coverImage,
-            initialSceneID: jsonStory.initialSceneKey,
+            id: "historias_tecsup",
+            title: "Supervivencia Académica",
+            description: "Logra superar el ciclo final mejorando tus notas y habilidades técnicas.",
+            coverImage: "escena_1_aula",
+            initialSceneID: scenes.first?.id ?? "1_1",
             scenes: scenes,
-            genre: jsonStory.genre,
-            duration: jsonStory.duration
+            genre: "Educativo/Drama",
+            duration: "20 min"
         )
     }
     
-    static func getElUltimoFaro() -> Story {
-        let inicioID = "inicio"
-        let playaID = "playa"
-        let bosqueID = "bosque"
-        let faroID = "faro"
-        
-        let finalSacrificioID = "final_sacrificio"
-        let finalEscapeID = "final_escape"
-        let finalSoledadID = "final_soledad"
-        let finalSecretoID = "final_secreto"
-        let finalVerdadID = "final_verdad"
-       
-        // Escena 1: El Despertar
-        let c1 = Choice(text: "Explorar la playa", targetSceneID: playaID, isWorst: true, trust: 0, bravery: 5, humanity: 2)
-        let c2 = Choice(text: "Buscar sobrevivientes", targetSceneID: bosqueID, trust: 10, bravery: 0, humanity: 5)
-        let c3 = Choice(text: "Ir hacia el faro", targetSceneID: faroID, isBest: true, trust: 0, bravery: 15, humanity: 0)
-       
-        let inicio = GameScene(
-            id: inicioID,
-            characterName: "Alex",
-            dialogue: "Despierto con el sabor de la sal en mi boca. La tormenta ha pasado, pero el silencio es peor. A lo lejos, un faro emite una luz roja intermitente. ¿Qué debo hacer?",
-            backgroundImage: "beach_start",
-            choices: [c1, c2, c3],
-            musicTrack: "mar_suspenso",
-            timeLimit: 12.0
-        )
-       
-        // Escena 2: La Playa
-        let playa = GameScene(
-            id: playaID,
-            characterName: "Valeria",
-            dialogue: "Veo a una mujer junto a unos restos de madera. Se presenta como Valeria. Dice que el faro no es lo que parece.",
-            backgroundImage: "beach_mist",
-            choices: [
-                Choice(text: "Confiar en Valeria", targetSceneID: faroID, isBest: true, trust: 15, bravery: 0, humanity: 5),
-                Choice(text: "Sospechar de sus motivos", targetSceneID: bosqueID, isWorst: true, trust: -10, bravery: 5, humanity: 0)
-            ],
-            musicTrack: "tension_playa",
-            timeLimit: 10.0
-        )
-       
-        // Escena 3: El Bosque
-        let bosque = GameScene(
-            id: bosqueID,
-            characterName: "Noah",
-            dialogue: "¡No te acerques! Noah me apunta con un trozo de metal afilado. Cree que somos parte de un experimento.",
-            backgroundImage: "dark_forest",
-            choices: [
-                Choice(text: "Cálmalo", targetSceneID: faroID, isBest: true, trust: 10, bravery: 0, humanity: 15),
-                Choice(text: "Desarmarlo", targetSceneID: faroID, isWorst: true, trust: 0, bravery: 20, humanity: 0)
-            ],
-            musicTrack: "suspenso_bosque",
-            timeLimit: 10.0
-        )
-       
-        // Escena 4: El Faro
-        let faro = GameScene(
-            id: faroID,
-            characterName: "Elias",
-            dialogue: "Elias está frente a una consola de bronce antigua. 'Alex, llegas justo a tiempo. Puedo apagarlo o usarlo para reescribir lo que pasó.'",
-            backgroundImage: "lighthouse_interior",
-            choices: [
-                Choice(text: "Sacrificarse", targetSceneID: "final", isBest: true, trust: 20, bravery: 0, humanity: 30),
-                Choice(text: "Usar la tecnología", targetSceneID: "final", isWorst: true, trust: -20, bravery: 20, humanity: 0)
-            ],
-            musicTrack: "lighthouse_ambient",
-            timeLimit: 15.0
-        )
-       
-        let finalSacrificio = GameScene(
-            id: finalSacrificioID,
-            dialogue: "Alex activa el faro para salvar a los demás, pero queda atrapado para siempre en sus engranajes de luz.",
-            backgroundImage: "lighthouse_top",
-            choices: [],
-            isEnding: true,
-            musicTrack: "ending_theme",
-            endingTitle: "SACRIFICIO"
-        )
-        
-        let finalEscape = GameScene(
-            id: finalEscapeID,
-            dialogue: "Lograste reparar el barco. El horizonte ya no es un sueño, sino tu destino.",
-            backgroundImage: "boat_escape",
-            choices: [],
-            isEnding: true,
-            musicTrack: "ending_theme",
-            endingTitle: "ESCAPE"
-        )
-        
-        let finalSoledad = GameScene(
-            id: finalSoledadID,
-            dialogue: "Tus aliados se han ido. El faro se apaga y la oscuridad de la isla te consume.",
-            backgroundImage: "lighthouse_dark",
-            choices: [],
-            isEnding: true,
-            musicTrack: "ending_theme",
-            endingTitle: "SOLEDAD"
-        )
-        
-        let finalSecreto = GameScene(
-            id: finalSecretoID,
-            dialogue: "Has descubierto la tecnología de manipulación mental. El mundo nunca volverá a ser el mismo.",
-            backgroundImage: "lighthouse_interior",
-            choices: [],
-            isEnding: true,
-            musicTrack: "ending_theme",
-            endingTitle: "EL SECRETO DEL FARO"
-        )
-        
-        let finalVerdad = GameScene(
-            id: finalVerdadID,
-            dialogue: "Las paredes de la realidad se desmoronan. Todo era una simulación de laboratorio.",
-            backgroundImage: "laboratory",
-            choices: [],
-            isEnding: true,
-            musicTrack: "ending_theme",
-            endingTitle: "LA VERDAD"
-        )
-
-        return Story(
-            id: "El Último Faro",
-            title: "El Último Faro",
-            description: "Una isla que devora recuerdos.",
-            coverImage: "faro_cover",
-            initialSceneID: inicioID,
-            scenes: [inicio, playa, bosque, faro, finalSacrificio, finalEscape, finalSoledad, finalSecreto, finalVerdad],
-            genre: "Misterio",
-            duration: "30 min"
-        )
-    }
 }

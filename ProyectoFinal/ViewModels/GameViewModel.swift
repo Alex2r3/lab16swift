@@ -6,13 +6,22 @@ class GameViewModel: ObservableObject {
     @Published var currentStory: Story?
     @Published var currentScene: GameScene?
     
-    @Published var trust: Int = 50
-    @Published var bravery: Int = 50
-    @Published var humanity: Int = 50
+    // Nuevos Atributos (Rango 0 - 10)
+    @Published var disciplina: Int = 0
+    @Published var inteligenciaPractica: Int = 0
+    @Published var confianza: Int = 0
+    @Published var energia: Int = 5 // Inicia en 5
     
     @Published var gameCompleted: Bool = false
     @Published var activeEndingTitle: String = ""
     @Published var activeEndingDescription: String = ""
+    
+    // Estados intermedios para las pantallas de transición
+    @Published var activeDestinationIntro: String? = nil
+    @Published var pendingStatChanges: [(String, Int)] = []
+    @Published var nextSceneID: String? = nil
+    @Published var showingNodeIntro: Bool = false
+    @Published var currentNodeIntro: String? = nil
     
     @Published var timerValue: Double = 0
     @Published var maxTimerValue: Double = 1.0
@@ -43,17 +52,37 @@ class GameViewModel: ObservableObject {
 
     func startStory(_ story: Story) {
         self.currentStory = story
-        self.trust = 50
-        self.bravery = 50
-        self.humanity = 50
+        self.disciplina = 0
+        self.inteligenciaPractica = 0
+        self.confianza = 0
+        self.energia = 5
         self.gameCompleted = false
         self.activeEndingTitle = ""
         self.activeEndingDescription = ""
         
+        self.activeDestinationIntro = nil
+        self.showingNodeIntro = false
+        self.pendingStatChanges = []
+        
         let initialScene = story.scenes.first(where: { $0.id == story.initialSceneID })
         if let scene = initialScene {
-            transitionToScene(scene)
+            transitionToScene(scene, fromStart: true)
         }
+    }
+    
+    func canShowChoice(_ choice: Choice) -> Bool {
+        if let req = choice.requisitos {
+            if let d = req.disciplinaMinima, disciplina < d { return false }
+            if let i = req.inteligenciaPracticaMinima, inteligenciaPractica < i { return false }
+            if let c = req.confianzaMinima, confianza < c { return false }
+            if let e = req.energiaMinima, energia < e { return false }
+            
+            if let minAvg = req.min, let maxAvg = req.max {
+                let avg = Double(disciplina + confianza + inteligenciaPractica) / 3.0
+                if avg < minAvg || avg > maxAvg { return false }
+            }
+        }
+        return true
     }
     
     func makeChoice(_ choice: Choice) {
@@ -61,51 +90,93 @@ class GameViewModel: ObservableObject {
         VoiceNarratorService.shared.stop()
         AudioManager.shared.setVolume(1.0)
         
-        withAnimation(.spring()) {
-            trust = max(0, min(100, trust + choice.trustImpact))
-            bravery = max(0, min(100, bravery + choice.braveryImpact))
-            humanity = max(0, min(100, humanity + choice.humanityImpact))
-        }
+        var statChanges: [(String, Int)] = []
         
-        var targetSceneID = choice.targetSceneID
-        
-        // Interceptar la escena de final del Último Faro para redirigir dinámicamente según estadísticas
-        if targetSceneID == "final" {
-            if humanity >= 80 && trust >= 70 {
-                targetSceneID = "final_sacrificio"
-            } else if bravery >= 80 && humanity >= 60 {
-                targetSceneID = "final_escape"
-            } else if trust <= 30 && humanity <= 40 {
-                targetSceneID = "final_soledad"
-            } else if bravery >= 70 && trust >= 40 {
-                targetSceneID = "final_secreto"
-            } else {
-                targetSceneID = "final_verdad"
+        if let cons = choice.consecuencias {
+            withAnimation(.spring()) {
+                if let d = cons.modificarDisciplina, d != 0 {
+                    disciplina = max(0, min(10, disciplina + d))
+                    statChanges.append(("Disciplina", d))
+                }
+                if let i = cons.modificarInteligenciaPractica, i != 0 {
+                    inteligenciaPractica = max(0, min(10, inteligenciaPractica + i))
+                    statChanges.append(("Inteligencia Práctica", i))
+                }
+                if let c = cons.modificarConfianza, c != 0 {
+                    confianza = max(0, min(10, confianza + c))
+                    statChanges.append(("Confianza", c))
+                }
+                if let e = cons.modificarEnergia, e != 0 {
+                    energia = max(0, min(10, energia + e))
+                    statChanges.append(("Energía", e))
+                }
             }
         }
         
-        if let nextScene = currentStory?.scenes.first(where: { $0.id == targetSceneID }) {
-            transitionToScene(nextScene)
+        self.pendingStatChanges = statChanges
+        self.nextSceneID = choice.targetSceneID
+        
+        if let intro = choice.introduccionDestino, !intro.isEmpty {
+            withAnimation {
+                self.activeDestinationIntro = intro
+            }
+        } else {
+            // Si no hay introduccion destino, saltar directo al siguiente paso
+            continueFromDestinationIntro()
         }
     }
     
-    private func transitionToScene(_ scene: GameScene) {
+    func continueFromDestinationIntro() {
+        withAnimation {
+            self.activeDestinationIntro = nil
+        }
+        
+        guard let nextID = nextSceneID,
+              let nextScene = currentStory?.scenes.first(where: { $0.id == nextID }) else {
+            return
+        }
+        
+        transitionToScene(nextScene, fromStart: false)
+    }
+    
+    private func transitionToScene(_ scene: GameScene, fromStart: Bool) {
         // Registrar visita a la escena en el ProgressManager
         if let story = currentStory {
             ProgressManager.shared.visitScene(storyTitle: story.title, sceneID: scene.id)
         }
         
-        withAnimation(.easeInOut(duration: 0.8)) {
-            self.currentScene = scene
-            self.showChoices = false // Ocultar opciones al iniciar la narración
+        self.currentScene = scene
+        self.showChoices = false // Ocultar opciones al iniciar la narración
+        
+        // Si la escena tiene introducción, mostrarla primero (a menos que estemos en un final)
+        if let intro = scene.introduction, !intro.isEmpty, !scene.isEnding {
+            self.currentNodeIntro = intro
+            withAnimation {
+                self.showingNodeIntro = true
+            }
+        } else {
+            startSceneExecution(scene)
+        }
+    }
+    
+    func continueFromNodeIntro() {
+        withAnimation {
+            self.showingNodeIntro = false
+            self.currentNodeIntro = nil
         }
         
+        if let scene = currentScene {
+            startSceneExecution(scene)
+        }
+    }
+    
+    private func startSceneExecution(_ scene: GameScene) {
         // Detener el temporizador mientras se narra
         stopTimer()
         
-        // Reproducir música
+        // Reproducir música (temporalmente deshabilitado por tema de limpieza)
         if let music = scene.musicTrack {
-            AudioManager.shared.playMusic(named: music)
+            // AudioManager.shared.playMusic(named: music)
         } else {
             AudioManager.shared.stopMusic()
         }
@@ -134,7 +205,12 @@ class GameViewModel: ObservableObject {
             }
         }
         
-        narrator.speak(scene.dialogue)
+        if !scene.dialogue.isEmpty {
+            narrator.speak(scene.dialogue)
+        } else {
+            // Si no hay diálogo, saltar directamente a opciones
+            narrator.skip()
+        }
     }
     
     private func determineEnding(for scene: GameScene) {
@@ -175,9 +251,11 @@ class GameViewModel: ObservableObject {
         stopTimer()
         guard let scene = currentScene, !scene.choices.isEmpty else { return }
         
-        if let worstChoice = scene.choices.first(where: { $0.isWorst }) {
+        let validChoices = scene.choices.filter { canShowChoice($0) }
+        
+        if let worstChoice = validChoices.first(where: { $0.isWorst }) {
             makeChoice(worstChoice)
-        } else if let firstChoice = scene.choices.first {
+        } else if let firstChoice = validChoices.first {
             makeChoice(firstChoice)
         }
     }
@@ -193,5 +271,8 @@ class GameViewModel: ObservableObject {
         self.activeEndingTitle = ""
         self.activeEndingDescription = ""
         self.showChoices = false
+        self.activeDestinationIntro = nil
+        self.showingNodeIntro = false
+        self.pendingStatChanges = []
     }
 }
