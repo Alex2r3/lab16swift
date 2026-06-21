@@ -47,98 +47,39 @@ struct NarrativeView: View {
     // MARK: - Main Scene View
     var mainSceneView: some View {
         ZStack {
-            // Fondo Cinematográfico
-            if let scene = viewModel.currentScene {
-                ZStack {
-                    if let uiImage = MediaImageLoader.loadImage(named: scene.backgroundImage) {
-                        Image(uiImage: uiImage)
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-                            .clipped()
-                    } else {
-                        Theme.mainGradient
-                            .overlay(
-                                VStack(spacing: 16) {
-                                    Image(systemName: "photo.on.rectangle.angled")
-                                        .font(.system(size: 64))
-                                        .foregroundColor(.white.opacity(0.1))
-                                    Text(scene.backgroundImage)
-                                        .font(.caption)
-                                        .foregroundColor(.white.opacity(0.2))
-                                        .tracking(2)
-                                }
-                            )
-                    }
-                    LinearGradient(
-                        colors: [.black.opacity(0.35), .black.opacity(0.8)],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                }
-                .ignoresSafeArea()
-            }
+            Color.black.ignoresSafeArea()
             
-            // Vigneta de borde con degradado
-            if viewModel.isTimerActive && viewModel.maxTimerValue > 0 && viewModel.showChoices {
-                let progress = max(0, min(1, (viewModel.maxTimerValue - viewModel.timerValue) / viewModel.maxTimerValue))
-                let vigOpacity = progress * 0.9
-                
-                ZStack {
-                    VStack {
-                        LinearGradient(colors: [Color.red.opacity(vigOpacity), .clear], startPoint: .top, endPoint: .bottom).frame(height: 180)
-                        Spacer()
-                    }
-                    VStack {
-                        Spacer()
-                        LinearGradient(colors: [.clear, Color.red.opacity(vigOpacity)], startPoint: .top, endPoint: .bottom).frame(height: 220)
-                    }
-                    HStack {
-                        LinearGradient(colors: [Color.red.opacity(vigOpacity), .clear], startPoint: .leading, endPoint: .trailing).frame(width: 80)
-                        Spacer()
-                    }
-                    HStack {
-                        Spacer()
-                        LinearGradient(colors: [.clear, Color.red.opacity(vigOpacity)], startPoint: .leading, endPoint: .trailing).frame(width: 80)
-                    }
-                }
-                .ignoresSafeArea()
-                .allowsHitTesting(false)
-                .animation(.easeInOut(duration: 0.3), value: progress)
-            }
-            
-            // Contenido principal
             VStack(spacing: 0) {
                 
-                // HUD Estadísticas (NUEVOS ATRIBUTOS)
+                // ── HUD Estadísticas (siempre visible, fondo sólido) ──
                 HStack(spacing: 8) {
-                    StatBar(label: "DISCIPLINA", value: viewModel.disciplina, color: .blue)
-                    StatBar(label: "I.PRÁCTICA", value: viewModel.inteligenciaPractica, color: .purple)
-                    StatBar(label: "CONFIANZA", value: viewModel.confianza, color: Theme.accentRed)
-                    StatBar(label: "ENERGÍA", value: viewModel.energia, color: Theme.accentYellow)
+                    StatBar(label: "DISCIPLINA",   value: viewModel.disciplina,           color: .blue)
+                    StatBar(label: "I.PRÁCTICA",   value: viewModel.inteligenciaPractica, color: .purple)
+                    StatBar(label: "CONFIANZA",    value: viewModel.confianza,            color: Theme.accentRed)
+                    StatBar(label: "ENERGÍA",      value: viewModel.energia,              color: Theme.accentYellow)
                 }
                 .padding(.horizontal, 6)
                 .padding(.vertical, 10)
-                .background(Color.black.opacity(0.6))
+                .background(Color.black.opacity(0.92))
                 
-                // Timer Grande
+                // ── Timer (cuando está activo) ──
                 if viewModel.isTimerActive && viewModel.maxTimerValue > 0 && viewModel.showChoices {
                     let progress = max(0, min(1, viewModel.timerValue / viewModel.maxTimerValue))
                     let isUrgent = viewModel.timerValue < 4.0
-                    
                     VStack(spacing: 6) {
                         GeometryReader { geo in
                             ZStack(alignment: .leading) {
                                 RoundedRectangle(cornerRadius: 8).fill(Color.white.opacity(0.1))
                                 RoundedRectangle(cornerRadius: 8)
-                                    .fill(LinearGradient(colors: isUrgent ? [Color.red, Color.orange] : [Color.yellow, Color.orange], startPoint: .leading, endPoint: .trailing))
+                                    .fill(LinearGradient(
+                                        colors: isUrgent ? [Color.red, Color.orange] : [Color.yellow, Color.orange],
+                                        startPoint: .leading, endPoint: .trailing))
                                     .frame(width: geo.size.width * CGFloat(progress))
                                     .animation(.linear(duration: 0.1), value: progress)
                             }
                         }
                         .frame(height: 14)
                         .padding(.horizontal, 16)
-                        
                         Text(String(format: "⏱  %.1f s", viewModel.timerValue))
                             .font(.system(size: 26, weight: .black, design: .monospaced))
                             .foregroundColor(isUrgent ? .red : .white.opacity(0.85))
@@ -148,109 +89,202 @@ struct NarrativeView: View {
                     .background(Color.black.opacity(0.4))
                 }
                 
-                Spacer()
-                
-                // Diálogo, Controles y opciones
-                VStack(spacing: 18) {
+                // ── Zona de imagen + contenido superpuesto ──
+                ZStack(alignment: .bottom) {
+                    
+                    // Imagen de escena (confinada DEBAJO del HUD, sin ignoresSafeArea)
                     if let scene = viewModel.currentScene {
-                        
-                        if !scene.dialogue.isEmpty {
-                            // Caja de diálogo
-                            VStack(alignment: .leading, spacing: 10) {
-                                if let title = scene.title {
-                                    Text(title.uppercased())
-                                        .font(.system(size: 13, weight: .black))
-                                        .foregroundColor(Theme.accentYellow)
-                                        .tracking(2)
-                                }
-                                Text(scene.dialogue)
-                                    .font(.custom("AvenirNext-Medium", size: 18))
-                                    .foregroundColor(.white)
-                                    .lineSpacing(7)
-                                    .fixedSize(horizontal: false, vertical: true)
-                            }
-                            .padding(24)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .background(
-                                RoundedRectangle(cornerRadius: 22)
-                                    .fill(Color.black.opacity(0.72))
-                                    .overlay(RoundedRectangle(cornerRadius: 22).stroke(Color.white.opacity(0.08), lineWidth: 1))
-                            )
-                            .padding(.horizontal, 16)
-                        }
-                        
-                        // HUD del Narrador de Voz
-                        if narrator.isSpeaking || narrator.isPaused {
-                            HStack(spacing: 16) {
-                                if narrator.isSpeaking && !narrator.isPaused {
-                                    SoundWaveVisualizer()
-                                } else {
-                                    HStack(spacing: 3) {
-                                        ForEach(0..<4) { _ in
-                                            RoundedRectangle(cornerRadius: 2).fill(Color.gray.opacity(0.5)).frame(width: 3, height: 8)
+                        Group {
+                            if let uiImage = MediaImageLoader.loadImage(named: scene.backgroundImage) {
+                                Image(uiImage: uiImage)
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                    .clipped()
+                            } else {
+                                Theme.mainGradient
+                                    .overlay(
+                                        VStack(spacing: 16) {
+                                            Image(systemName: "photo.on.rectangle.angled")
+                                                .font(.system(size: 64))
+                                                .foregroundColor(.white.opacity(0.1))
+                                            Text(scene.backgroundImage)
+                                                .font(.caption)
+                                                .foregroundColor(.white.opacity(0.2))
+                                                .tracking(2)
                                         }
-                                    }
-                                    .frame(height: 24)
-                                }
-                                
-                                Button(action: {
-                                    if narrator.isPaused { narrator.resume() } else { narrator.pause() }
-                                }) {
-                                    Image(systemName: narrator.isPaused ? "play.fill" : "pause.fill")
-                                        .font(.title3).foregroundColor(.white).frame(width: 40, height: 40)
-                                        .background(Color.white.opacity(0.12)).clipShape(Circle())
-                                }
-                                
-                                Spacer()
-                                
-                                Button(action: { narrator.skip() }) {
-                                    Text("OMITIR").font(.system(size: 11, weight: .black)).foregroundColor(Theme.accentYellow)
-                                        .padding(.vertical, 8).padding(.horizontal, 12).background(Theme.accentYellow.opacity(0.15)).cornerRadius(8)
-                                }
+                                    )
                             }
-                            .padding(.horizontal, 16).padding(.vertical, 10)
-                            .background(RoundedRectangle(cornerRadius: 18).fill(Color.black.opacity(0.6)).overlay(RoundedRectangle(cornerRadius: 18).stroke(Color.white.opacity(0.1), lineWidth: 1)))
-                            .padding(.horizontal, 16).transition(.opacity.combined(with: .scale))
                         }
-                        
-                        // Opciones de decisión (FILTRADAS POR REQUISITOS)
-                        if !viewModel.gameCompleted {
-                            if viewModel.showChoices {
+                        .id(scene.backgroundImage)
+                        .transition(.opacity)
+                    }
+                    
+                    // Degradado oscuro en la mitad inferior (legibilidad)
+                    LinearGradient(
+                        colors: [.clear, .black.opacity(0.25), .black.opacity(0.75)],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                    .allowsHitTesting(false)
+                    
+                    // Viñeta roja del timer
+                    if viewModel.isTimerActive && viewModel.maxTimerValue > 0 && viewModel.showChoices {
+                        let progress = max(0, min(1, (viewModel.maxTimerValue - viewModel.timerValue) / viewModel.maxTimerValue))
+                        let vigOpacity = progress * 0.9
+                        ZStack {
+                            VStack {
+                                LinearGradient(colors: [Color.red.opacity(vigOpacity), .clear], startPoint: .top, endPoint: .bottom).frame(height: 180)
+                                Spacer()
+                            }
+                            VStack {
+                                Spacer()
+                                LinearGradient(colors: [.clear, Color.red.opacity(vigOpacity)], startPoint: .top, endPoint: .bottom).frame(height: 220)
+                            }
+                            HStack {
+                                LinearGradient(colors: [Color.red.opacity(vigOpacity), .clear], startPoint: .leading, endPoint: .trailing).frame(width: 80)
+                                Spacer()
+                            }
+                            HStack {
+                                Spacer()
+                                LinearGradient(colors: [.clear, Color.red.opacity(vigOpacity)], startPoint: .leading, endPoint: .trailing).frame(width: 80)
+                            }
+                        }
+                        .allowsHitTesting(false)
+                        .animation(.easeInOut(duration: 0.3), value: progress)
+                    }
+                    
+                    // ── Contenido inferior: narración ↔ opciones ──
+                    VStack(spacing: 0) {
+                        if let scene = viewModel.currentScene {
+                            
+                            if viewModel.gameCompleted {
+                                // Pantalla de Final
+                                VStack(spacing: 22) {
+                                    Text(viewModel.activeEndingTitle)
+                                        .font(.system(size: 30, weight: .black))
+                                        .foregroundColor(Theme.accentRed)
+                                        .multilineTextAlignment(.center)
+                                    Text(viewModel.activeEndingDescription)
+                                        .font(.body).multilineTextAlignment(.center)
+                                        .foregroundColor(.white.opacity(0.8)).padding(.horizontal)
+                                    Button(action: {
+                                        viewModel.resetGame()
+                                        presentationMode.wrappedValue.dismiss()
+                                    }) {
+                                        Text("VOLVER AL MENÚ")
+                                            .font(.headline).bold().padding()
+                                            .frame(maxWidth: .infinity)
+                                            .background(Color.white).foregroundColor(.black).cornerRadius(14)
+                                    }
+                                }
+                                .padding(36).background(Color.black.opacity(0.9))
+                                .cornerRadius(26).padding(16).padding(.bottom, 20)
+                                
+                            } else if viewModel.showChoices {
+                                // ── OPCIONES (desliza desde abajo) ──
                                 VStack(spacing: 10) {
                                     let availableChoices = scene.choices.filter { viewModel.canShowChoice($0) }
-                                    
                                     ForEach(availableChoices) { choice in
                                         ChoiceButton(choice: choice) {
                                             viewModel.makeChoice(choice)
                                         }
                                     }
                                 }
-                                .padding(.horizontal, 16).padding(.bottom, 28)
-                                .transition(.move(edge: .bottom).combined(with: .opacity))
-                            }
-                        } else {
-                            // Pantalla de Final
-                            VStack(spacing: 22) {
-                                Text(viewModel.activeEndingTitle)
-                                    .font(.system(size: 30, weight: .black))
-                                    .foregroundColor(Theme.accentRed)
-                                    .multilineTextAlignment(.center)
+                                .padding(.horizontal, 16)
+                                .padding(.bottom, 32)
+                                .transition(.asymmetric(
+                                    insertion: .move(edge: .bottom).combined(with: .opacity),
+                                    removal:   .move(edge: .bottom).combined(with: .opacity)
+                                ))
                                 
-                                Text(viewModel.activeEndingDescription)
-                                    .font(.body).multilineTextAlignment(.center).foregroundColor(.white.opacity(0.8)).padding(.horizontal)
-                                
-                                Button(action: {
-                                    viewModel.resetGame()
-                                    presentationMode.wrappedValue.dismiss()
-                                }) {
-                                    Text("VOLVER AL MENÚ")
-                                        .font(.headline).bold().padding().frame(maxWidth: .infinity).background(Color.white).foregroundColor(.black).cornerRadius(14)
+                            } else {
+                                // ── CAJA DE NARRACIÓN (se oculta al terminar) ──
+                                VStack(spacing: 12) {
+                                    if !scene.dialogue.isEmpty {
+                                        VStack(alignment: .leading, spacing: 10) {
+                                            if let title = scene.title {
+                                                Text(title.uppercased())
+                                                    .font(.system(size: 13, weight: .black))
+                                                    .foregroundColor(Theme.accentYellow)
+                                                    .tracking(2)
+                                            }
+                                            Text(scene.dialogue)
+                                                .font(.custom("AvenirNext-Medium", size: 17))
+                                                .foregroundColor(.white)
+                                                .lineSpacing(7)
+                                                .fixedSize(horizontal: false, vertical: true)
+                                        }
+                                        .padding(24)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                        .background(
+                                            RoundedRectangle(cornerRadius: 22)
+                                                .fill(Color.black.opacity(0.78))
+                                                .overlay(RoundedRectangle(cornerRadius: 22)
+                                                    .stroke(Color.white.opacity(0.08), lineWidth: 1))
+                                        )
+                                        .padding(.horizontal, 16)
+                                        // Toca el cuadro para omitir la narración
+                                        .onTapGesture { narrator.skip() }
+                                    }
+                                    
+                                    // Controles del Narrador de Voz
+                                    if narrator.isSpeaking || narrator.isPaused {
+                                        HStack(spacing: 16) {
+                                            if narrator.isSpeaking && !narrator.isPaused {
+                                                SoundWaveVisualizer()
+                                            } else {
+                                                HStack(spacing: 3) {
+                                                    ForEach(0..<4) { _ in
+                                                        RoundedRectangle(cornerRadius: 2)
+                                                            .fill(Color.gray.opacity(0.5))
+                                                            .frame(width: 3, height: 8)
+                                                    }
+                                                }
+                                                .frame(height: 24)
+                                            }
+                                            Button(action: {
+                                                if narrator.isPaused { narrator.resume() } else { narrator.pause() }
+                                            }) {
+                                                Image(systemName: narrator.isPaused ? "play.fill" : "pause.fill")
+                                                    .font(.title3).foregroundColor(.white)
+                                                    .frame(width: 40, height: 40)
+                                                    .background(Color.white.opacity(0.12)).clipShape(Circle())
+                                            }
+                                            Spacer()
+                                            Button(action: { narrator.skip() }) {
+                                                Text("OMITIR")
+                                                    .font(.system(size: 11, weight: .black))
+                                                    .foregroundColor(Theme.accentYellow)
+                                                    .padding(.vertical, 8).padding(.horizontal, 12)
+                                                    .background(Theme.accentYellow.opacity(0.15)).cornerRadius(8)
+                                            }
+                                        }
+                                        .padding(.horizontal, 16).padding(.vertical, 10)
+                                        .background(
+                                            RoundedRectangle(cornerRadius: 18)
+                                                .fill(Color.black.opacity(0.6))
+                                                .overlay(RoundedRectangle(cornerRadius: 18)
+                                                    .stroke(Color.white.opacity(0.1), lineWidth: 1))
+                                        )
+                                        .padding(.horizontal, 16)
+                                        .transition(.opacity.combined(with: .scale))
+                                    }
                                 }
+                                .padding(.bottom, 24)
+                                .transition(.asymmetric(
+                                    insertion: .move(edge: .bottom).combined(with: .opacity),
+                                    removal:   .move(edge: .bottom).combined(with: .opacity)
+                                ))
                             }
-                            .padding(36).background(Color.black.opacity(0.9)).cornerRadius(26).padding(16).padding(.bottom, 20)
                         }
                     }
+                    .animation(.easeInOut(duration: 0.45), value: viewModel.showChoices)
+                    .animation(.easeInOut(duration: 0.35), value: viewModel.gameCompleted)
                 }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .clipped()
+                .ignoresSafeArea(edges: .bottom)
             }
         }
     }
