@@ -7,25 +7,37 @@ struct ChoiceButton: View {
     
     var body: some View {
         Button(action: action) {
-            Text(choice.text)
-                .font(.custom("AvenirNext-Medium", size: 16))
-                .foregroundColor(.white)
-                .multilineTextAlignment(.center)
-                .padding(.vertical, 14)
-                .padding(.horizontal, 18)
-                .frame(maxWidth: .infinity)
-                .background(
-                    RoundedRectangle(cornerRadius: 14)
-                        .fill(Color.white.opacity(0.08))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 14)
-                                .stroke(Color.white.opacity(0.2), lineWidth: 1)
-                        )
-                )
+            HStack(spacing: 12) {
+                // Indicador de bala
+                Circle()
+                    .fill(Color.white.opacity(0.3))
+                    .frame(width: 6, height: 6)
+                    .padding(.leading, 4)
+                
+                Text(choice.text)
+                    .font(.custom("AvenirNext-Medium", size: 15))
+                    .foregroundColor(.white)
+                    .multilineTextAlignment(.leading)
+                    .lineSpacing(4)
+                    .fixedSize(horizontal: false, vertical: true) // El texto NUNCA se corta
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .padding(.vertical, 16)
+            .padding(.horizontal, 16)
+            .frame(maxWidth: .infinity)
+            .background(
+                RoundedRectangle(cornerRadius: 14)
+                    .fill(Color.white.opacity(0.08))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 14)
+                            .stroke(Color.white.opacity(0.2), lineWidth: 1)
+                    )
+            )
         }
         .buttonStyle(ScaleButtonStyle())
     }
 }
+
 
 struct ScaleButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {

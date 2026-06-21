@@ -245,15 +245,15 @@ struct JSONNode: Decodable {
     let introduccion: String?
     let narracion: String?
     let imagen: String?
-    let es_final: Bool?
+    let esFinal: Bool?          // JSON: "es_final" → convertFromSnakeCase → esFinal
     let decisiones: [JSONDecision]?
     let endingTitle: String?
 }
 
 struct JSONDecision: Decodable {
     let texto: String
-    let nodo_destino_id: String
-    let introduccion_destino: String?
+    let nodoDestinoId: String           // JSON: "nodo_destino_id"
+    let introduccionDestino: String?    // JSON: "introduccion_destino"
     let requisitos: Requisitos?
     let consecuencias: Consecuencias?
 }
@@ -283,6 +283,7 @@ class StoryService {
         }
         do {
             let decoder = JSONDecoder()
+            decoder.keyDecodingStrategy = .convertFromSnakeCase
             let nodes = try decoder.decode([JSONNode].self, from: data)
             return mapNodesToStory(nodes)
         } catch {
@@ -300,8 +301,8 @@ class StoryService {
                 for dec in decisiones {
                     let choice = Choice(
                         text: dec.texto,
-                        targetSceneID: dec.nodo_destino_id,
-                        introduccionDestino: dec.introduccion_destino,
+                        targetSceneID: dec.nodoDestinoId,
+                        introduccionDestino: dec.introduccionDestino,
                         requisitos: dec.requisitos,
                         consecuencias: dec.consecuencias
                     )
@@ -317,7 +318,7 @@ class StoryService {
                 dialogue: node.narracion ?? "",
                 backgroundImage: node.imagen ?? "default_bg",
                 choices: choices,
-                isEnding: node.es_final ?? false,
+                isEnding: node.esFinal ?? false,
                 endingTitle: node.titulo
             )
             scenes.append(scene)

@@ -116,12 +116,17 @@ class GameViewModel: ObservableObject {
         self.pendingStatChanges = statChanges
         self.nextSceneID = choice.targetSceneID
         
-        if let intro = choice.introduccionDestino, !intro.isEmpty {
+        let hasIntroText = !(choice.introduccionDestino ?? "").isEmpty
+        let hasStatChanges = !statChanges.isEmpty
+        
+        if hasIntroText || hasStatChanges {
+            // Mostrar pantalla de transición si hay texto de intro O cambios de stats
+            let introText = choice.introduccionDestino ?? ""
             withAnimation {
-                self.activeDestinationIntro = intro
+                self.activeDestinationIntro = introText.isEmpty ? " " : introText
             }
         } else {
-            // Si no hay introduccion destino, saltar directo al siguiente paso
+            // Sin intro ni cambios de stats → saltar directo
             continueFromDestinationIntro()
         }
     }

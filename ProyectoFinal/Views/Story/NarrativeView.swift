@@ -263,60 +263,135 @@ struct DestinationIntroView: View {
     let statChanges: [(String, Int)]
     let onContinue: () -> Void
     
+    @State private var cardsVisible = false
+    
+    // Icono por nombre de stat
+    private func icon(for stat: String) -> String {
+        switch stat {
+        case "Disciplina": return "target"
+        case "Confianza": return "person.fill.checkmark"
+        case "Inteligencia Práctica": return "brain.head.profile"
+        case "Energía": return "bolt.fill"
+        default: return "star.fill"
+        }
+    }
+    
+    // Color por nombre de stat
+    private func statColor(for stat: String) -> Color {
+        switch stat {
+        case "Disciplina": return .blue
+        case "Confianza": return Color(red: 0.9, green: 0.2, blue: 0.3)
+        case "Inteligencia Práctica": return .purple
+        case "Energía": return Color(red: 1.0, green: 0.8, blue: 0.0)
+        default: return .white
+        }
+    }
+    
     var body: some View {
         ZStack {
-            Color.black.ignoresSafeArea()
+            // Fondo con gradiente cinematográfico
+            LinearGradient(
+                colors: [Color.black, Color(red: 0.05, green: 0.05, blue: 0.15)],
+                startPoint: .top, endPoint: .bottom
+            )
+            .ignoresSafeArea()
             
-            VStack(spacing: 40) {
+            VStack(spacing: 0) {
                 Spacer()
                 
-                Text(text)
-                    .font(.title3)
-                    .fontWeight(.semibold)
-                    .multilineTextAlignment(.center)
-                    .foregroundColor(.white)
-                    .padding()
+                // Título de sección
+                if !statChanges.isEmpty {
+                    Text("CONSECUENCIAS")
+                        .font(.system(size: 11, weight: .black))
+                        .foregroundColor(.white.opacity(0.4))
+                        .tracking(4)
+                        .padding(.bottom, 16)
+                }
                 
+                // Texto de intro (solo si no es blank)
+                let displayText = text.trimmingCharacters(in: .whitespaces)
+                if !displayText.isEmpty {
+                    Text(displayText)
+                        .font(.title3)
+                        .fontWeight(.semibold)
+                        .multilineTextAlignment(.center)
+                        .foregroundColor(.white)
+                        .lineSpacing(6)
+                        .padding(.horizontal, 30)
+                        .padding(.bottom, statChanges.isEmpty ? 0 : 36)
+                }
+                
+                // Tarjetas de cambio de stats
                 if !statChanges.isEmpty {
                     VStack(spacing: 12) {
-                        Text("Cambios de Estadísticas")
-                            .font(.headline)
-                            .foregroundColor(.gray)
-                        
-                        ForEach(statChanges, id: \.0) { change in
-                            HStack {
+                        ForEach(Array(statChanges.enumerated()), id: \.offset) { index, change in
+                            let isPositive = change.1 > 0
+                            let color = statColor(for: change.0)
+                            
+                            HStack(spacing: 14) {
+                                // Icono de stat
+                                Image(systemName: icon(for: change.0))
+                                    .font(.system(size: 18, weight: .semibold))
+                                    .foregroundColor(color)
+                                    .frame(width: 28)
+                                
+                                // Nombre de stat
                                 Text(change.0)
-                                    .font(.body)
+                                    .font(.system(size: 15, weight: .semibold))
                                     .foregroundColor(.white)
+                                
                                 Spacer()
-                                Text(change.1 > 0 ? "+\(change.1)" : "\(change.1)")
-                                    .font(.headline)
-                                    .foregroundColor(change.1 > 0 ? .green : .red)
+                                
+                                // Badge de cambio
+                                Text(isPositive ? "+\(change.1)" : "\(change.1)")
+                                    .font(.system(size: 20, weight: .black, design: .rounded))
+                                    .foregroundColor(isPositive ? .green : .red)
+                                    .frame(width: 52, height: 38)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 10)
+                                            .fill((isPositive ? Color.green : Color.red).opacity(0.18))
+                                            .overlay(
+                                                RoundedRectangle(cornerRadius: 10)
+                                                    .stroke((isPositive ? Color.green : Color.red).opacity(0.4), lineWidth: 1)
+                                            )
+                                    )
                             }
-                            .padding(.horizontal, 40)
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 14)
+                            .background(
+                                RoundedRectangle(cornerRadius: 16)
+                                    .fill(Color.white.opacity(0.05))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 16)
+                                            .stroke(color.opacity(0.2), lineWidth: 1)
+                                    )
+                            )
+                            .opacity(cardsVisible ? 1 : 0)
+                            .offset(y: cardsVisible ? 0 : 20)
+                            .animation(.spring(response: 0.4, dampingFraction: 0.7).delay(Double(index) * 0.12), value: cardsVisible)
                         }
                     }
-                    .padding(.vertical, 20)
-                    .background(Color.white.opacity(0.05))
-                    .cornerRadius(12)
-                    .padding(.horizontal, 30)
+                    .padding(.horizontal, 24)
                 }
                 
                 Spacer()
                 
                 Button(action: onContinue) {
                     Text("CONTINUAR")
-                        .font(.headline)
-                        .bold()
-                        .padding()
+                        .font(.system(size: 15, weight: .black))
+                        .tracking(2)
+                        .foregroundColor(.black)
+                        .padding(.vertical, 16)
                         .frame(maxWidth: .infinity)
                         .background(Color.white)
-                        .foregroundColor(.black)
-                        .cornerRadius(14)
+                        .cornerRadius(16)
                         .padding(.horizontal, 30)
                 }
-                .padding(.bottom, 40)
+                .padding(.bottom, 50)
             }
+        }
+        .onAppear {
+            withAnimation { cardsVisible = true }
         }
     }
 }
