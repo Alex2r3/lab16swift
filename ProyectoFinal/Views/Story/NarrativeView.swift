@@ -80,32 +80,8 @@ struct NarrativeView: View {
                 .padding(.vertical, 10)
                 .background(Color.black.opacity(0.92))
                 
-                // ── Timer (cuando está activo) ──
-                if viewModel.isTimerActive && viewModel.maxTimerValue > 0 && viewModel.showChoices {
-                    let progress = max(0, min(1, viewModel.timerValue / viewModel.maxTimerValue))
-                    let isUrgent = viewModel.timerValue < 4.0
-                    VStack(spacing: 6) {
-                        GeometryReader { geo in
-                            ZStack(alignment: .leading) {
-                                RoundedRectangle(cornerRadius: 8).fill(Color.white.opacity(0.1))
-                                RoundedRectangle(cornerRadius: 8)
-                                    .fill(LinearGradient(
-                                        colors: isUrgent ? [Color.red, Color.orange] : [Color.yellow, Color.orange],
-                                        startPoint: .leading, endPoint: .trailing))
-                                    .frame(width: geo.size.width * CGFloat(progress))
-                                    .animation(.linear(duration: 0.1), value: progress)
-                            }
-                        }
-                        .frame(height: 14)
-                        .padding(.horizontal, 16)
-                        Text(String(format: "⏱  %.1f s", viewModel.timerValue))
-                            .font(.system(size: 26, weight: .black, design: .monospaced))
-                            .foregroundColor(isUrgent ? .red : .white.opacity(0.85))
-                            .shadow(color: isUrgent ? .red.opacity(0.7) : .clear, radius: 8)
-                    }
-                    .padding(.vertical, 10)
-                    .background(Color.black.opacity(0.4))
-                }
+                
+                
                 
                 // ── Zona de imagen + contenido superpuesto ──
                 // GeometryReader da un frame fijo explícito a la imagen.
@@ -118,8 +94,16 @@ struct NarrativeView: View {
                             if let uiImage = MediaImageLoader.loadImage(named: scene.backgroundImage) {
                                 Image(uiImage: uiImage)
                                     .resizable()
-                                    .scaledToFill()
-                                    .frame(width: geo.size.width, height: geo.size.height)
+                                    .scaledToFit()
+                                    .mask(
+                                                LinearGradient(
+                                                    colors: [.black, .black, .black.opacity(0.5), .clear],
+                                                    startPoint: .top,
+                                                    endPoint: .bottom
+                                                )
+                                            )
+                                    .frame(width: geo.size.width, height: geo.size.height, alignment: .top)
+                                    
                                     .clipped()          // Solo la imagen se clipea
                             } else {
                                 Theme.mainGradient
@@ -177,6 +161,40 @@ struct NarrativeView: View {
                             }
                         }
                     )
+                    // ── Timer (cuando está activo) ──
+                    .overlay(alignment: .top){
+                        if viewModel.isTimerActive && viewModel.maxTimerValue > 0 && viewModel.showChoices {
+                            let progress = max(0, min(1, viewModel.timerValue / viewModel.maxTimerValue))
+                            let isUrgent = viewModel.timerValue < 4.0
+                            VStack(spacing: 6) {
+                                GeometryReader { geo in
+                                    ZStack(alignment: .leading) {
+                                        RoundedRectangle(cornerRadius: 8).fill(Color.white.opacity(0.1))
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .fill(LinearGradient(
+                                                colors: isUrgent ? [Color.red, Color.orange] : [Color.yellow, Color.orange],
+                                                startPoint: .leading, endPoint: .trailing))
+                                            .frame(width: geo.size.width * CGFloat(progress))
+                                            .animation(.linear(duration: 0.1), value: progress)
+                                    }
+                                }
+                                .frame(height: 5)
+                                .padding(.horizontal, 16)
+                                Text(String(format: "%.1f s", viewModel.timerValue))
+                                    .font(.system(size: 12, weight: .black, design: .monospaced))
+                                    .foregroundColor(isUrgent ? .red : .white.opacity(0.85))
+                                    .shadow(color: isUrgent ? .red.opacity(0.7) : .clear, radius: 8)
+                            }
+                            .padding(.vertical, 10)
+                            .background(
+                                RoundedRectangle(cornerRadius: 16)
+                                // Ajusta el número para más o menos curvas
+                                .fill(Color.black.opacity(0.65))
+                            )
+                            .padding(.horizontal, 10)
+                            .padding(.top, 10)
+                        }
+                    }
                     // ── Contenido (narración / opciones) en overlay separado ──
                     // Al estar en .overlay NO hereda el clipping de la imagen.
                     // El texto puede tener su tamaño natural sin cortarse.
@@ -218,7 +236,7 @@ struct NarrativeView: View {
                                         }
                                     }
                                     .padding(.horizontal, 16)
-                                    .padding(.bottom, 8)
+                                    .padding(.bottom, 35)
                                     .transition(.asymmetric(
                                         insertion: .move(edge: .bottom).combined(with: .opacity),
                                         removal:   .move(edge: .bottom).combined(with: .opacity)
@@ -296,7 +314,7 @@ struct NarrativeView: View {
                                             .transition(.opacity.combined(with: .scale))
                                         }
                                     }
-                                    .padding(.bottom, 8)
+                                    .padding(.bottom, 35)
                                     .transition(.asymmetric(
                                         insertion: .move(edge: .bottom).combined(with: .opacity),
                                         removal:   .move(edge: .bottom).combined(with: .opacity)
@@ -511,3 +529,44 @@ struct SoundWaveVisualizer: View {
     }
 }
 
+// MARK: - Previews
+
+#Preview("Escena de Juego Activa") {
+    // 1. Creamos una escena de prueba simulando la llegada desde el JSON/Modelo
+    let mockScene = GameScene(
+        id: "escena_callejon_01",
+        title: "El Encuentro",
+        introduction: "Capítulo 1: La decisión inevitable",
+        dialogue: "Un silencio sepulcral inunda el callejón. A lo lejos, divisas una silueta que se acerca a paso firme. Tu energía decae, pero tu instinto te dice que no debes huir. ¿Qué harás?",
+        backgroundImage: "bg_dark_alley",
+        choices: [
+            Choice(id: "c1", text: "Enfrentar a la silueta con calma", targetSceneID: "next_01", introduccionDestino: "Decides mantener la compostura.", requisitos: nil, consecuencias: nil, isWorst: false),
+            Choice(id: "c2", text: "Esconderte detrás de los contenedores", targetSceneID: "next_02", introduccionDestino: "Buscas cobertura rápidamente.", requisitos: nil, consecuencias: nil, isWorst: true)
+        ],
+        isEnding: false,
+        musicTrack: "tension_theme",
+        timeLimit: 12.0,
+    )
+    
+    // 2. Instanciamos el ViewModel real
+    let viewModel = GameViewModel()
+    
+    // 3. Inyectamos los estados iniciales simulados para que el Canvas los pinte
+    viewModel.currentScene = mockScene
+    viewModel.disciplina = 6
+    viewModel.inteligenciaPractica = 4
+    viewModel.confianza = 8
+    viewModel.energia = 5
+    
+    // Forzamos a que muestre el flujo principal (puedes cambiarlo a false para ver la caja de texto)
+    viewModel.showChoices = true
+    
+    // Opcional: Si quieres probar cómo se ve el Timer corriendo en tiempo real en la vista interactiva
+    viewModel.isTimerActive = true
+    viewModel.maxTimerValue = 12.0
+    viewModel.timerValue = 8.4
+
+    return NavigationStack {
+        NarrativeView(viewModel: viewModel)
+    }
+}
