@@ -1,9 +1,11 @@
 import SwiftUI
 
 struct HomeView: View {
+    @Environment(\.modelContext) private var modelContext
     @ObservedObject var viewModel: GameViewModel
     @State private var allStories: [Story] = []
     
+    // Oh wait, I can't just replace the whole thing if I don't see it. Let's look at it first.
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 30) {
@@ -87,12 +89,12 @@ struct HomeView: View {
         }
         .task {
             do {
-                let loadedStories = try await StoryService.loadAllStories()
+                let loadedStories = try await StoryService.loadAllStories(modelContext: modelContext)
                 DispatchQueue.main.async {
                     self.allStories = loadedStories
                 }
             } catch {
-                print("Error al cargar las historias desde la API: \(error.localizedDescription)")
+                print("Error al cargar las historias desde la API o caché: \(error.localizedDescription)")
             }
         }
     }

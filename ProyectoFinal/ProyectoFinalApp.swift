@@ -1,5 +1,6 @@
 import SwiftUI
 import FirebaseCore
+import SwiftData
 
 class AppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication,
@@ -22,10 +23,12 @@ struct ProyectoFinalApp: App {
                 AuthView()
             }
         }
+        .modelContainer(for: [OfflineStory.self, OfflineProgress.self])
     }
 }
 
 struct MainContentView: View {
+    @Environment(\.modelContext) private var modelContext
     @StateObject private var viewModel = GameViewModel()
     @State private var selectedTab = 0
     
@@ -71,11 +74,16 @@ struct MainContentView: View {
         }
         .accentColor(.white)
         .preferredColorScheme(.dark)
+        .onAppear {
+            ProgressManager.shared.modelContext = modelContext
+            ProgressManager.shared.loadProgress()
+        }
     }
 }
 
 // MARK: - Library View
 struct LibraryView: View {
+    @Environment(\.modelContext) private var modelContext
     @ObservedObject var viewModel: GameViewModel
     @State private var allStories: [Story] = []
     
@@ -154,15 +162,14 @@ struct LibraryView: View {
             .padding(.bottom, 30)
         }
         .background(Theme.black.ignoresSafeArea())
-        .background(Theme.black.ignoresSafeArea())
         .task {
             do {
-                let loadedStories = try await StoryService.loadAllStories()
+                let loadedStories = try await StoryService.loadAllStories(modelContext: modelContext)
                 DispatchQueue.main.async {
                     self.allStories = loadedStories
                 }
             } catch {
-                print("Error al cargar las historias desde la API: \(error.localizedDescription)")
+                print("Error al cargar las historias desde la API o caché: \(error.localizedDescription)")
             }
         }
     }

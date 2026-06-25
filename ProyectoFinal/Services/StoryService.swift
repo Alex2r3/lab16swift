@@ -3,6 +3,7 @@ import AVFoundation
 import UIKit
 import FirebaseFirestore
 import FirebaseAuth
+import SwiftData
 
 // MARK: - Audio Manager
 class AudioManager: NSObject, ObservableObject {
@@ -173,10 +174,12 @@ class VoiceNarratorService: NSObject, ObservableObject, AVSpeechSynthesizerDeleg
 }
 
 // MARK: - Progress Manager
+@MainActor
 class ProgressManager: ObservableObject {
     static let shared = ProgressManager()
     
     @Published var progressData: [String: StoryProgress] = [:]
+    var modelContext: ModelContext?
     
     private let db = Firestore.firestore()
     
@@ -196,18 +199,51 @@ class ProgressManager: ObservableObject {
     func loadProgress() {
         guard let userId = Auth.auth().currentUser?.uid else { return }
         
-        db.collection("users").document(userId).getDocument { [weak self] snapshot, error in
-            guard let self = self, let snapshot = snapshot, snapshot.exists else { return }
-            do {
-                if let jsonString = snapshot.data()?["progressData"] as? String,
-                   let data = jsonString.data(using: .utf8) {
-                    let decoded = try JSONDecoder().decode([String: StoryProgress].self, from: data)
-                    DispatchQueue.main.async {
-                        self.progressData = decoded
-                    }
+        // 1. Cargar desde SwiftData primero (rápido, offline)
+        if let context = modelContext {
+            let descriptor = FetchDescriptor<OfflineProgress>(predicate: #Predicate { $0.userId == userId })
+            if let cachedProgress = try? context.fetch(descriptor) {
+                var localProgress: [String: StoryProgress] = [:]
+                for cp in cachedProgress {
+                    localProgress[cp.storyTitle] = StoryProgress(
+                        storyTitle: cp.storyTitle,
+                        visitedSceneIDs: cp.getVisitedSceneIDs(),
+                        unlockedEndingIDs: cp.getUnlockedEndingIDs()
+                    )
                 }
-            } catch {
-                print("ProgressManager: Error decodificando progreso de Firestore: \(error.localizedDescription)")
+                DispatchQueue.main.async {
+                    self.progressData = localProgress
+                }
+            }
+        }
+        
+        // 2. Si hay internet, cargar de Firestore y hacer merge
+        if NetworkMonitor.shared.isConnected {
+            db.collection("users").document(userId).getDocument { [weak self] snapshot, error in
+                guard let self = self, let snapshot = snapshot, snapshot.exists else { return }
+                do {
+                    if let jsonString = snapshot.data()?["progressData"] as? String,
+                       let data = jsonString.data(using: .utf8) {
+                        let remoteData = try JSONDecoder().decode([String: StoryProgress].self, from: data)
+                        
+                        // Merge local y remoto
+                        DispatchQueue.main.async {
+                            for (key, remoteProgress) in remoteData {
+                                if var local = self.progressData[key] {
+                                    local.visitedSceneIDs.formUnion(remoteProgress.visitedSceneIDs)
+                                    local.unlockedEndingIDs.formUnion(remoteProgress.unlockedEndingIDs)
+                                    self.progressData[key] = local
+                                } else {
+                                    self.progressData[key] = remoteProgress
+                                }
+                            }
+                            // Guardar el merge localmente y remotamente
+                            self.saveProgress()
+                        }
+                    }
+                } catch {
+                    print("ProgressManager: Error decodificando progreso de Firestore: \(error.localizedDescription)")
+                }
             }
         }
     }
@@ -215,17 +251,53 @@ class ProgressManager: ObservableObject {
     func saveProgress() {
         guard let userId = Auth.auth().currentUser?.uid else { return }
         
-        do {
-            let encoded = try JSONEncoder().encode(progressData)
-            if let jsonString = String(data: encoded, encoding: .utf8) {
-                db.collection("users").document(userId).setData(["progressData": jsonString], merge: true) { error in
-                    if let error = error {
-                        print("ProgressManager: Error guardando progreso en Firestore: \(error.localizedDescription)")
-                    }
+        // 1. Guardar en SwiftData (Offline)
+        if let context = modelContext {
+            for (title, prog) in progressData {
+                let id = "\(userId)_\(title)"
+                let descriptor = FetchDescriptor<OfflineProgress>(predicate: #Predicate { $0.id == id })
+                if let existing = try? context.fetch(descriptor).first {
+                    existing.visitedSceneIDsData = (try? JSONEncoder().encode(prog.visitedSceneIDs)) ?? Data()
+                    existing.unlockedEndingIDsData = (try? JSONEncoder().encode(prog.unlockedEndingIDs)) ?? Data()
+                    existing.lastUpdated = Date()
+                    existing.isSyncedWithRemote = NetworkMonitor.shared.isConnected
+                } else {
+                    let newProgress = OfflineProgress(
+                        userId: userId,
+                        storyTitle: title,
+                        visitedSceneIDs: prog.visitedSceneIDs,
+                        unlockedEndingIDs: prog.unlockedEndingIDs,
+                        isSyncedWithRemote: NetworkMonitor.shared.isConnected
+                    )
+                    context.insert(newProgress)
                 }
             }
-        } catch {
-            print("ProgressManager: Error codificando progreso: \(error.localizedDescription)")
+            try? context.save()
+        }
+        
+        // 2. Guardar en Firestore si hay internet
+        if NetworkMonitor.shared.isConnected {
+            do {
+                let encoded = try JSONEncoder().encode(progressData)
+                if let jsonString = String(data: encoded, encoding: .utf8) {
+                    db.collection("users").document(userId).setData(["progressData": jsonString], merge: true) { error in
+                        if let error = error {
+                            print("ProgressManager: Error guardando progreso en Firestore: \(error.localizedDescription)")
+                        } else {
+                            // Actualizar flag de sync local
+                            if let context = self.modelContext {
+                                let descriptor = FetchDescriptor<OfflineProgress>(predicate: #Predicate { $0.userId == userId })
+                                if let items = try? context.fetch(descriptor) {
+                                    for item in items { item.isSyncedWithRemote = true }
+                                    try? context.save()
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch {
+                print("ProgressManager: Error codificando progreso: \(error.localizedDescription)")
+            }
         }
     }
     
@@ -288,35 +360,76 @@ class StoryService {
     // URL del endpoint base. Cambiar cuando se suba a producción.
     static let apiBaseURL = "https://servicio-historias-api.onrender.com/api/v1/historias"
     
-    static func loadAllStories() async throws -> [Story] {
+    @MainActor
+    static func loadAllStories(modelContext: ModelContext? = nil) async throws -> [Story] {
         var stories: [Story] = []
+        let storyId = "historias_tecsup"
         
-        guard let url = URL(string: apiBaseURL) else {
-            throw URLError(.badURL)
+        // 1. Si hay internet, intentamos descargar de la API y actualizar caché
+        if NetworkMonitor.shared.isConnected {
+            guard let url = URL(string: apiBaseURL) else {
+                throw URLError(.badURL)
+            }
+            
+            do {
+                let (data, response) = try await URLSession.shared.data(from: url)
+                
+                guard let httpResponse = response as? HTTPURLResponse,
+                      (200...299).contains(httpResponse.statusCode) else {
+                    throw URLError(.badServerResponse)
+                }
+                
+                let decoder = JSONDecoder()
+                decoder.keyDecodingStrategy = .convertFromSnakeCase
+                let nodes = try decoder.decode([JSONNode].self, from: data)
+                
+                if let story = mapNodesToStory(nodes) {
+                    stories.append(story)
+                    
+                    // Actualizar/Sobrescribir el caché local en SwiftData
+                    if let context = modelContext {
+                        let descriptor = FetchDescriptor<OfflineStory>(predicate: #Predicate { $0.id == storyId })
+                        if let existing = try? context.fetch(descriptor).first {
+                            existing.jsonData = data
+                        } else {
+                            let newOfflineStory = OfflineStory(id: storyId, jsonData: data)
+                            context.insert(newOfflineStory)
+                        }
+                        try? context.save()
+                    }
+                    return stories
+                }
+            } catch {
+                print("Error obteniendo del API, intentando cargar de caché local fallback: \(error.localizedDescription)")
+                // Si falla el API por cualquier cosa pero tenemos local, continuamos e intentamos cargar el local
+            }
         }
         
-        // Petición asíncrona a la API usando concurrencia moderna
-        let (data, response) = try await URLSession.shared.data(from: url)
+        // 2. Si no hay internet o falló la llamada al API, intentamos usar el caché local
+        if let context = modelContext {
+            let descriptor = FetchDescriptor<OfflineStory>(predicate: #Predicate { $0.id == storyId })
+            if let cached = try? context.fetch(descriptor).first {
+                do {
+                    let decoder = JSONDecoder()
+                    decoder.keyDecodingStrategy = .convertFromSnakeCase
+                    let nodes = try decoder.decode([JSONNode].self, from: cached.jsonData)
+                    if let story = mapNodesToStory(nodes) {
+                        stories.append(story)
+                        print("Cargado con éxito desde el caché local de SwiftData")
+                        return stories
+                    }
+                } catch {
+                    print("Error decodificando caché local de historias: \(error.localizedDescription)")
+                }
+            }
+        }
         
-        guard let httpResponse = response as? HTTPURLResponse, 
-              (200...299).contains(httpResponse.statusCode) else {
+        // 3. Si no hay internet y tampoco tenemos caché guardado
+        if !NetworkMonitor.shared.isConnected {
+            throw URLError(.notConnectedToInternet)
+        } else {
             throw URLError(.badServerResponse)
         }
-        
-        do {
-            let decoder = JSONDecoder()
-            decoder.keyDecodingStrategy = .convertFromSnakeCase
-            let nodes = try decoder.decode([JSONNode].self, from: data)
-            
-            if let story = mapNodesToStory(nodes) {
-                stories.append(story)
-            }
-        } catch {
-            print("Error decodificando el JSON de la API: \(error.localizedDescription)")
-            throw error
-        }
-        
-        return stories
     }
     
     private static func mapNodesToStory(_ nodes: [JSONNode]) -> Story? {

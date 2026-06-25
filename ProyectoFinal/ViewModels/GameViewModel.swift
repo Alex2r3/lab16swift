@@ -2,6 +2,7 @@ import SwiftUI
 import Combine
 import AVFoundation
 
+@MainActor
 class GameViewModel: ObservableObject {
     @Published var currentStory: Story?
     @Published var currentScene: GameScene?
