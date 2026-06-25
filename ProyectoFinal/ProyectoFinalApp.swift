@@ -1,10 +1,26 @@
 import SwiftUI
+import FirebaseCore
+
+class AppDelegate: NSObject, UIApplicationDelegate {
+    func application(_ application: UIApplication,
+                     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+        FirebaseApp.configure()
+        return true
+    }
+}
 
 @main
 struct ProyectoFinalApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    @StateObject private var authManager = AuthManager.shared
+    
     var body: some Scene {
         WindowGroup {
-            MainContentView()
+            if authManager.isAuthenticated {
+                MainContentView()
+            } else {
+                AuthView()
+            }
         }
     }
 }
@@ -138,8 +154,16 @@ struct LibraryView: View {
             .padding(.bottom, 30)
         }
         .background(Theme.black.ignoresSafeArea())
-        .onAppear {
-            self.allStories = StoryService.loadAllStories()
+        .background(Theme.black.ignoresSafeArea())
+        .task {
+            do {
+                let loadedStories = try await StoryService.loadAllStories()
+                DispatchQueue.main.async {
+                    self.allStories = loadedStories
+                }
+            } catch {
+                print("Error al cargar las historias desde la API: \(error.localizedDescription)")
+            }
         }
     }
 }
@@ -192,6 +216,24 @@ struct ProfileView: View {
                     }
                     .padding(.horizontal)
                 }
+                
+                // Botón de Cerrar Sesión
+                Button(action: {
+                    AuthManager.shared.signOut()
+                }) {
+                    HStack {
+                        Image(systemName: "rectangle.portrait.and.arrow.right")
+                        Text("Cerrar Sesión")
+                            .font(.headline)
+                    }
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(Color.red.opacity(0.8))
+                    .cornerRadius(12)
+                }
+                .padding(.horizontal, 20)
+                .padding(.top, 10)
             }
             .padding(.bottom, 50)
         }

@@ -1,0 +1,80 @@
+ESTRUCTURA DE CARPETAS RECOMENDADA:
+
+mi-api-node/
+├── package.json
+├── app.js
+├── src/
+│   ├── routes/
+│   │   └── historias.routes.js
+│   ├── controllers/
+│   │   └── historias.controller.js
+│   └── data/
+│       └── historias.json  <-- ¡AQUÍ DEBE IR TU ARCHIVO JSON!
+
+=======================================================
+1. ARCHIVO: app.js
+=======================================================
+const express = require('express');
+const cors = require('cors');
+const historiasRoutes = require('./src/routes/historias.routes');
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// Middlewares
+app.use(cors());
+app.use(express.json());
+
+// Rutas
+// He definido el endpoint base como /api/v1/historias
+app.use('/api/v1/historias', historiasRoutes);
+
+// Iniciar servidor
+app.listen(PORT, () => {
+  console.log(`Servidor de Historias corriendo en http://localhost:${PORT}`);
+});
+
+=======================================================
+2. ARCHIVO: src/routes/historias.routes.js
+=======================================================
+const express = require('express');
+const router = express.Router();
+const historiasController = require('../controllers/historias.controller');
+
+// GET /api/v1/historias -> Obtiene todas las historias
+router.get('/', historiasController.getAllHistorias);
+
+module.exports = router;
+
+=======================================================
+3. ARCHIVO: src/controllers/historias.controller.js
+=======================================================
+const path = require('path');
+const fs = require('fs');
+
+const getAllHistorias = (req, res) => {
+    try {
+        // Ruta absoluta hacia el archivo historias.json
+        const jsonPath = path.join(__dirname, '../data/historias.json');
+        
+        // Leer el archivo de forma síncrona (como es pequeño no hay problema)
+        // o usar fs.promises.readFile para asincronía.
+        const rawData = fs.readFileSync(jsonPath, 'utf8');
+        const historias = JSON.parse(rawData);
+        
+        res.status(200).json(historias);
+    } catch (error) {
+        console.error("Error al leer historias.json:", error);
+        res.status(500).json({ message: "Error interno del servidor al obtener las historias." });
+    }
+};
+
+module.exports = {
+    getAllHistorias
+};
+
+=======================================================
+DISEÑO DEL ENDPOINT:
+La opción más eficaz y sencilla para tu caso es tener un ÚNICO endpoint que devuelva todo el JSON. 
+El tamaño de tu historias.json es muy pequeño (unos ~65 KB), por lo que traerlo todo en una sola petición al inicio de la app es muchísimo más rápido y óptimo que hacer decenas de peticiones cada vez que el usuario toma una decisión. De esta forma, el juego fluirá en tiempo real sin tiempos de carga (lag) por culpa de red.
+=======================================================

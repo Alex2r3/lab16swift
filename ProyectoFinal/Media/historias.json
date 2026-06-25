@@ -1527,7 +1527,7 @@
         "introduccion_destino": "",
         "requisitos": {
           "min": 0,
-          "max": 3
+          "max": 4
         },
         "consecuencias": {
           "modificar_disciplina": 0,

@@ -85,8 +85,15 @@ struct HomeView: View {
             }
             .padding(.bottom, 50)
         }
-        .onAppear {
-            self.allStories = StoryService.loadAllStories()
+        .task {
+            do {
+                let loadedStories = try await StoryService.loadAllStories()
+                DispatchQueue.main.async {
+                    self.allStories = loadedStories
+                }
+            } catch {
+                print("Error al cargar las historias desde la API: \(error.localizedDescription)")
+            }
         }
     }
 }

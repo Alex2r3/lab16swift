@@ -1,6 +1,8 @@
 import Foundation
 import AVFoundation
 import UIKit
+import FirebaseFirestore
+import FirebaseAuth
 
 // MARK: - Audio Manager
 class AudioManager: NSObject, ObservableObject {
@@ -176,29 +178,52 @@ class ProgressManager: ObservableObject {
     
     @Published var progressData: [String: StoryProgress] = [:]
     
-    private let storageKey = "com.proyectoFinal.storyProgress"
+    private let db = Firestore.firestore()
     
     private init() {
-        loadProgress()
+        // Escuchar cambios de autenticación para cargar o limpiar el progreso
+        Auth.auth().addStateDidChangeListener { [weak self] _, user in
+            if user != nil {
+                self?.loadProgress()
+            } else {
+                DispatchQueue.main.async {
+                    self?.progressData = [:]
+                }
+            }
+        }
     }
     
     func loadProgress() {
-        if let data = UserDefaults.standard.data(forKey: storageKey) {
+        guard let userId = Auth.auth().currentUser?.uid else { return }
+        
+        db.collection("users").document(userId).getDocument { [weak self] snapshot, error in
+            guard let self = self, let snapshot = snapshot, snapshot.exists else { return }
             do {
-                let decoded = try JSONDecoder().decode([String: StoryProgress].self, from: data)
-                DispatchQueue.main.async {
-                    self.progressData = decoded
+                if let jsonString = snapshot.data()?["progressData"] as? String,
+                   let data = jsonString.data(using: .utf8) {
+                    let decoded = try JSONDecoder().decode([String: StoryProgress].self, from: data)
+                    DispatchQueue.main.async {
+                        self.progressData = decoded
+                    }
                 }
             } catch {
-                print("ProgressManager: Error decodificando progreso: \(error.localizedDescription)")
+                print("ProgressManager: Error decodificando progreso de Firestore: \(error.localizedDescription)")
             }
         }
     }
     
     func saveProgress() {
+        guard let userId = Auth.auth().currentUser?.uid else { return }
+        
         do {
             let encoded = try JSONEncoder().encode(progressData)
-            UserDefaults.standard.set(encoded, forKey: storageKey)
+            if let jsonString = String(data: encoded, encoding: .utf8) {
+                db.collection("users").document(userId).setData(["progressData": jsonString], merge: true) { error in
+                    if let error = error {
+                        print("ProgressManager: Error guardando progreso en Firestore: \(error.localizedDescription)")
+                    }
+                }
+            }
         } catch {
             print("ProgressManager: Error codificando progreso: \(error.localizedDescription)")
         }
@@ -260,36 +285,38 @@ struct JSONDecision: Decodable {
 
 // MARK: - Story Service
 class StoryService {
-    static func loadAllStories() -> [Story] {
+    // URL del endpoint base. Cambiar cuando se suba a producción.
+    static let apiBaseURL = "https://servicio-historias-api.onrender.com/api/v1/historias"
+    
+    static func loadAllStories() async throws -> [Story] {
         var stories: [Story] = []
         
-        let mediaPaths = Bundle.main.paths(forResourcesOfType: "json", inDirectory: "Media")
-        for path in mediaPaths {
-            if path.hasSuffix("historias.json") {
-                if let story = parseHistorias(fromFile: path) {
-                    stories.append(story)
-                }
-            }
+        guard let url = URL(string: apiBaseURL) else {
+            throw URLError(.badURL)
         }
         
-        // Fallback si no hay JSONs
-        // Fallback si no hay JSONs, devolver arreglo vacío
-        return stories
-    }
-    
-    static func parseHistorias(fromFile path: String) -> Story? {
-        guard let data = try? Data(contentsOf: URL(fileURLWithPath: path)) else {
-            return nil
+        // Petición asíncrona a la API usando concurrencia moderna
+        let (data, response) = try await URLSession.shared.data(from: url)
+        
+        guard let httpResponse = response as? HTTPURLResponse, 
+              (200...299).contains(httpResponse.statusCode) else {
+            throw URLError(.badServerResponse)
         }
+        
         do {
             let decoder = JSONDecoder()
             decoder.keyDecodingStrategy = .convertFromSnakeCase
             let nodes = try decoder.decode([JSONNode].self, from: data)
-            return mapNodesToStory(nodes)
+            
+            if let story = mapNodesToStory(nodes) {
+                stories.append(story)
+            }
         } catch {
-            print("Error parseando historias.json en \(path): \(error)")
-            return nil
+            print("Error decodificando el JSON de la API: \(error.localizedDescription)")
+            throw error
         }
+        
+        return stories
     }
     
     private static func mapNodesToStory(_ nodes: [JSONNode]) -> Story? {
