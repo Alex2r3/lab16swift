@@ -321,8 +321,9 @@ struct DecisionTreeView: View {
     @ObservedObject var progressManager = ProgressManager.shared
     @Environment(\.presentationMode) var presentationMode
     
+    // Usar sheet(item:) para evitar race condition donde el sheet
+    // se abre antes de que selectedScene esté disponible (pantalla gris)
     @State private var selectedScene: GameScene?
-    @State private var showDetailSheet = false
     
     var progress: StoryProgress {
         progressManager.getProgress(for: story.title)
@@ -348,7 +349,6 @@ struct DecisionTreeView: View {
                                 TreeNodeView(node: node, progress: progress) {
                                     if node.isVisited {
                                         selectedScene = node.scene
-                                        showDetailSheet = true
                                     }
                                 }
                             }
@@ -368,10 +368,9 @@ struct DecisionTreeView: View {
         }
         .navigationTitle("Progreso: \(story.title)")
         .navigationBarTitleDisplayMode(.inline)
-        .sheet(isPresented: $showDetailSheet) {
-            if let scene = selectedScene {
-                SceneDetailView(scene: scene, story: story, progress: progress)
-            }
+        // sheet(item:) garantiza que el dato ya existe antes de presentar el sheet
+        .sheet(item: $selectedScene) { scene in
+            SceneDetailView(scene: scene, story: story, progress: progress)
         }
     }
     
@@ -445,10 +444,12 @@ struct TreeNodeView: View {
                         .font(.system(size: 20))
                         .foregroundColor(node.isVisited ? .blue : .gray)
                     
-                    Text(node.isVisited ? (node.scene.characterName ?? "Escena") : "Bloqueado")
+                    Text(node.isVisited ? (node.scene.title ?? node.scene.id) : "Bloqueado")
                         .font(.system(size: 11, weight: .bold))
                         .foregroundColor(node.isVisited ? .white : .gray.opacity(0.8))
-                        .lineLimit(1)
+                        .multilineTextAlignment(.center)
+                        .lineLimit(2)
+                        .frame(width: 110)
                 }
             }
             .padding(.vertical, 16)

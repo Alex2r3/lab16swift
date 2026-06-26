@@ -89,7 +89,7 @@ class GameViewModel: ObservableObject {
     func makeChoice(_ choice: Choice) {
         stopTimer()
         VoiceNarratorService.shared.stop()
-        AudioManager.shared.setVolume(1.0)
+        AudioManager.shared.setVolume(0.35)
         
         var statChanges: [(String, Int)] = []
         
@@ -180,22 +180,22 @@ class GameViewModel: ObservableObject {
         // Detener el temporizador mientras se narra
         stopTimer()
         
-        // Reproducir música (temporalmente deshabilitado por tema de limpieza)
+        // Reproducir música
         if let music = scene.musicTrack {
-            // AudioManager.shared.playMusic(named: music)
+            AudioManager.shared.playMusic(named: music)
         } else {
             AudioManager.shared.stopMusic()
         }
         
         // Configurar y reproducir el narrador por voz
         let narrator = VoiceNarratorService.shared
-        AudioManager.shared.setVolume(0.2) // Atenuar música de fondo
+        AudioManager.shared.setVolume(0.30) // Atenuar música de fondo
         
         narrator.onCompletion = { [weak self] in
             guard let self = self else { return }
             
             // Restaurar volumen y mostrar opciones
-            AudioManager.shared.setVolume(1.0)
+            AudioManager.shared.setVolume(0.50)
             
             withAnimation(.spring()) {
                 self.showChoices = true
@@ -270,7 +270,7 @@ class GameViewModel: ObservableObject {
         stopTimer()
         VoiceNarratorService.shared.stop()
         AudioManager.shared.stopMusic()
-        AudioManager.shared.setVolume(1.0)
+        AudioManager.shared.setVolume(0.35)
         self.currentStory = nil
         self.currentScene = nil
         self.gameCompleted = false

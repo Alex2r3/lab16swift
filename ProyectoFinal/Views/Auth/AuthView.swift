@@ -15,12 +15,13 @@ struct AuthView: View {
             VStack(spacing: 25) {
                 // Logo o Título
                 VStack(spacing: 10) {
-                    Image(systemName: "book.fill")
-                        .font(.system(size: 60))
-                        .foregroundColor(Theme.accentYellow)
+                    Image("logo")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 200, height:200)
                     
                     Text("Proyecto Final")
-                        .font(.system(size: 32, weight: .black))
+                        .font(.system(size: 32, weight: .black, design: .rounded))
                         .foregroundColor(.white)
                         .tracking(2)
                     
@@ -34,11 +35,11 @@ struct AuthView: View {
                 VStack(spacing: 16) {
                     HStack {
                         Image(systemName: "envelope.fill")
-                            .foregroundColor(.gray)
+                            .foregroundColor(.red)
                         TextField("Correo Electrónico", text: $email)
                             .keyboardType(.emailAddress)
                             .autocapitalization(.none)
-                            .foregroundColor(.white)
+                            .foregroundStyle(.red)
                     }
                     .padding()
                     .background(Theme.darkGray)
@@ -46,9 +47,10 @@ struct AuthView: View {
                     
                     HStack {
                         Image(systemName: "lock.fill")
-                            .foregroundColor(.gray)
-                        SecureField("Contraseña", text: $password)
-                            .foregroundColor(.white)
+                            .foregroundColor(.red)
+                        SecureField("Contraseña",text: $password)
+                            .foregroundStyle(.red)
+                            .tint(.red)
                     }
                     .padding()
                     .background(Theme.darkGray)

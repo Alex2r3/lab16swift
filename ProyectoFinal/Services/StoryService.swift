@@ -12,7 +12,10 @@ class AudioManager: NSObject, ObservableObject {
     private var currentTrack: String?
     
     func playMusic(named name: String) {
-        guard currentTrack != name else { return }
+        // Normalizar el nombre quitando la extensión si viene incluida (ej: "track.mp3" -> "track")
+        let cleanName = (name as NSString).deletingPathExtension
+        
+        guard currentTrack != cleanName else { return }
         
         stopMusic()
         
@@ -21,35 +24,36 @@ class AudioManager: NSObject, ObservableObject {
         
         // Buscar en bundle y subdirectorios de Media
         for ext in extensions {
-            if let path = Bundle.main.path(forResource: name, ofType: ext) {
+            if let path = Bundle.main.path(forResource: cleanName, ofType: ext) {
                 fileURL = URL(fileURLWithPath: path)
                 break
             }
-            if let path = Bundle.main.path(forResource: name, ofType: ext, inDirectory: "Media") {
+            if let path = Bundle.main.path(forResource: cleanName, ofType: ext, inDirectory: "Media") {
                 fileURL = URL(fileURLWithPath: path)
                 break
             }
-            if let path = Bundle.main.path(forResource: name, ofType: ext, inDirectory: "Media/Music") {
+            if let path = Bundle.main.path(forResource: cleanName, ofType: ext, inDirectory: "Media/Music") {
                 fileURL = URL(fileURLWithPath: path)
                 break
             }
         }
         
         guard let url = fileURL else {
-            print("AudioManager: No se encontró el archivo '\(name)'")
+            print("AudioManager: No se encontró el archivo '\(cleanName)'")
             return
         }
         
         do {
             audioPlayer = try AVAudioPlayer(contentsOf: url)
             audioPlayer?.numberOfLoops = -1 // Bucle infinito
-            audioPlayer?.volume = VoiceNarratorService.shared.isSpeaking ? 0.2 : 1.0
+            // Volumen general más bajo para que no sature.
+            audioPlayer?.volume = VoiceNarratorService.shared.isSpeaking ? 0.02 : 0.35
             audioPlayer?.prepareToPlay()
             audioPlayer?.play()
-            currentTrack = name
-            print("AudioManager: Reproduciendo '\(name)'")
+            currentTrack = cleanName
+            print("AudioManager: Reproduciendo '\(cleanName)'")
         } catch {
-            print("AudioManager: Error reproduciendo '\(name)': \(error.localizedDescription)")
+            print("AudioManager: Error reproduciendo '\(cleanName)': \(error.localizedDescription)")
         }
     }
     
@@ -126,7 +130,20 @@ class VoiceNarratorService: NSObject, ObservableObject, AVSpeechSynthesizerDeleg
         narrationCompleted = false
         
         let utterance = AVSpeechUtterance(string: text)
-        utterance.voice = AVSpeechSynthesisVoice(language: "es-ES") ?? AVSpeechSynthesisVoice(language: AVSpeechSynthesisVoice.currentLanguageCode())
+        
+        // El llamado a speechVoices() precarga la metadata y evita el error "Data corrupted" común en iOS.
+        let voices = AVSpeechSynthesisVoice.speechVoices()
+        
+        // Buscamos una voz de alta calidad (Premium o Enhanced) en español
+        if let premiumVoice = voices.first(where: { $0.language.starts(with: "es") && $0.quality == .premium }) {
+            utterance.voice = premiumVoice
+        } else if let enhancedVoice = voices.first(where: { $0.language.starts(with: "es") && $0.quality == .enhanced }) {
+            utterance.voice = enhancedVoice
+        } else {
+            // Fallback a voz por defecto si no hay de alta calidad
+            utterance.voice = AVSpeechSynthesisVoice(language: "es-ES") ?? AVSpeechSynthesisVoice(language: AVSpeechSynthesisVoice.currentLanguageCode())
+        }
+        
         utterance.rate = speechRate
         
         synthesizer.speak(utterance)
@@ -342,6 +359,7 @@ struct JSONNode: Decodable {
     let introduccion: String?
     let narracion: String?
     let imagen: String?
+    let musica: String?
     let esFinal: Bool?          // JSON: "es_final" → convertFromSnakeCase → esFinal
     let decisiones: [JSONDecision]?
     let endingTitle: String?
@@ -459,6 +477,7 @@ class StoryService {
                 backgroundImage: node.imagen ?? "default_bg",
                 choices: choices,
                 isEnding: node.esFinal ?? false,
+                musicTrack: node.musica,
                 endingTitle: node.titulo
             )
             scenes.append(scene)

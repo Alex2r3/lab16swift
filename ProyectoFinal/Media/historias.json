@@ -58,7 +58,8 @@
           "modificar_energia": -1
         }
       }
-    ]
+    ],
+    "musica": "track-basic-intro"
   },
   {
     "id": "1_ALT_REPLY",
@@ -85,7 +86,8 @@
           "modificar_energia": 0
         }
       }
-    ]
+    ],
+    "musica": "track-estresado"
   },
   {
     "id": "2_1",
@@ -146,7 +148,8 @@
           "modificar_energia": -3
         }
       }
-    ]
+    ],
+    "musica": "track-medio-intraquilo"
   },
   {
     "id": "2_ALT_PARTY",
@@ -173,7 +176,8 @@
           "modificar_energia": 0
         }
       }
-    ]
+    ],
+    "musica": "track-basic-intro"
   },
   {
     "id": "3_PARTY_HANGOVER",
@@ -200,7 +204,8 @@
           "modificar_energia": 0
         }
       }
-    ]
+    ],
+    "musica": "track-estresado"
   },
   {
     "id": "3_1",
@@ -261,7 +266,8 @@
           "modificar_energia": -2
         }
       }
-    ]
+    ],
+    "musica": "track-agitado"
   },
   {
     "id": "3_PROF_HELP",
@@ -288,7 +294,8 @@
           "modificar_energia": 0
         }
       }
-    ]
+    ],
+    "musica": "track-intelectual"
   },
   {
     "id": "4_1",
@@ -332,7 +339,8 @@
           "modificar_energia": 0
         }
       }
-    ]
+    ],
+    "musica": "track-tecleando"
   },
   {
     "id": "4_GROUP_STUDY",
@@ -376,7 +384,8 @@
           "modificar_energia": 1
         }
       }
-    ]
+    ],
+    "musica": "track-confianza"
   },
   {
     "id": "4_GROUP_DISTRACTED",
@@ -403,7 +412,8 @@
           "modificar_energia": 0
         }
       }
-    ]
+    ],
+    "musica": "track-medio-intraquilo"
   },
   {
     "id": "4_ALT_B",
@@ -430,7 +440,8 @@
           "modificar_energia": 0
         }
       }
-    ]
+    ],
+    "musica": "track-agitado"
   },
   {
     "id": "5_1",
@@ -491,7 +502,8 @@
           "modificar_energia": 3
         }
       }
-    ]
+    ],
+    "musica": "track-estresado"
   },
   {
     "id": "5_FRIEND_NOTES",
@@ -518,7 +530,8 @@
           "modificar_energia": 0
         }
       }
-    ]
+    ],
+    "musica": "track-medio-intraquilo"
   },
   {
     "id": "6_1",
@@ -579,7 +592,8 @@
           "modificar_energia": -4
         }
       }
-    ]
+    ],
+    "musica": "track-melancolico"
   },
   {
     "id": "6_GPT_CRUTCH",
@@ -606,7 +620,8 @@
           "modificar_energia": 0
         }
       }
-    ]
+    ],
+    "musica": "track-tecleando"
   },
   {
     "id": "6_ALT_B",
@@ -633,7 +648,8 @@
           "modificar_energia": -1
         }
       }
-    ]
+    ],
+    "musica": "track-melancolico"
   },
   {
     "id": "7_ALT_C",
@@ -660,7 +676,8 @@
           "modificar_energia": 1
         }
       }
-    ]
+    ],
+    "musica": "track-agitado"
   },
   {
     "id": "7_1",
@@ -738,7 +755,8 @@
           "modificar_energia": -1
         }
       }
-    ]
+    ],
+    "musica": "track-estresado"
   },
   {
     "id": "7_CHEAT_PEEK",
@@ -782,7 +800,8 @@
           "modificar_energia": 0
         }
       }
-    ]
+    ],
+    "musica": "track-agitado"
   },
   {
     "id": "7_RUSH_EXAM",
@@ -826,7 +845,8 @@
           "modificar_energia": -2
         }
       }
-    ]
+    ],
+    "musica": "track-estresado"
   },
   {
     "id": "8_1",
@@ -887,7 +907,8 @@
           "modificar_energia": 0
         }
       }
-    ]
+    ],
+    "musica": "track-medio-intraquilo"
   },
   {
     "id": "8_HELP_FRIEND",
@@ -931,7 +952,8 @@
           "modificar_energia": 0
         }
       }
-    ]
+    ],
+    "musica": "track-confianza"
   },
   {
     "id": "9_1",
@@ -992,7 +1014,8 @@
           "modificar_energia": 0
         }
       }
-    ]
+    ],
+    "musica": "track-tecleando"
   },
   {
     "id": "9_BRUTE_FORCE",
@@ -1036,7 +1059,8 @@
           "modificar_energia": 0
         }
       }
-    ]
+    ],
+    "musica": "track-estresado"
   },
   {
     "id": "9_GIVE_UP",
@@ -1080,7 +1104,8 @@
           "modificar_energia": 1
         }
       }
-    ]
+    ],
+    "musica": "track-melancolico"
   },
   {
     "id": "10_1",
@@ -1141,7 +1166,8 @@
           "modificar_energia": -2
         }
       }
-    ]
+    ],
+    "musica": "track-melancolico"
   },
   {
     "id": "10_JUNK_FOOD",
@@ -1185,7 +1211,8 @@
           "modificar_energia": 1
         }
       }
-    ]
+    ],
+    "musica": "track-melancolico"
   },
   {
     "id": "11_1",
@@ -1229,7 +1256,8 @@
           "modificar_energia": -2
         }
       }
-    ]
+    ],
+    "musica": "track-intelectual"
   },
   {
     "id": "11_VLSM_FIRST",
@@ -1273,7 +1301,8 @@
           "modificar_energia": -2
         }
       }
-    ]
+    ],
+    "musica": "track-estresado"
   },
   {
     "id": "12_1",
@@ -1317,7 +1346,8 @@
           "modificar_energia": -1
         }
       }
-    ]
+    ],
+    "musica": "track-agitado"
   },
   {
     "id": "12_NEW_FW",
@@ -1361,7 +1391,8 @@
           "modificar_energia": -1
         }
       }
-    ]
+    ],
+    "musica": "track-agitado"
   },
   {
     "id": "13_1",
@@ -1422,7 +1453,8 @@
           "modificar_energia": -1
         }
       }
-    ]
+    ],
+    "musica": "track-final-jefe"
   },
   {
     "id": "13_PANIC_ARCH",
@@ -1466,7 +1498,8 @@
           "modificar_energia": 1
         }
       }
-    ]
+    ],
+    "musica": "track-agitado"
   },
   {
     "id": "14_1",
@@ -1536,7 +1569,8 @@
           "modificar_energia": 0
         }
       }
-    ]
+    ],
+    "musica": "track-estresado"
   },
   {
     "id": "15_DIOS",
@@ -1545,7 +1579,8 @@
     "narracion": "¡Tus notas están en 19 y 20! Eres el primer puesto de la carrera. No solo dominaste la presión, la disciplina y las trasnochadas, sino que ayudaste a tus amigos y demostraste de qué estás hecho. Hasta el profesor más duro te manda un correo felicitándote. Eres un dios del código, vro.",
     "imagen": "escena_15_dios",
     "es_final": true,
-    "decisiones": []
+    "decisiones": [],
+    "musica": "track-final-dios"
   },
   {
     "id": "15_CANON",
@@ -1554,7 +1589,8 @@
     "narracion": "¡Aprobado en todo! No habrás sacado el primer puesto histórico, pero venciste al sistema. Tras semanas de estrés, lograste salir invicto. Tu madre te pregunta desde la cocina cómo te fue. Sonríes aliviado y respondes: 'Seguimos vivos, mamá'. Has dominado Tecsup con disciplina pura.",
     "imagen": "escena_15_aprobado",
     "es_final": true,
-    "decisiones": []
+    "decisiones": [],
+    "musica": "track-final-canon"
   },
   {
     "id": "15_BURNOUT",
@@ -1563,7 +1599,8 @@
     "narracion": "Aprobaste Móviles y Base de Datos, pero el 10 rojo en Redes te destruye la vista. Te vas a bica en un curso. Salvaste el año y no te botan, pero el costo físico y mental fue altísimo. Te tiras a la cama sintiendo que ganaste la batalla, pero perdiste tu salud en el intento.",
     "imagen": "escena_15_gris",
     "es_final": true,
-    "decisiones": []
+    "decisiones": [],
+    "musica": "truck-final-supletorio"
   },
   {
     "id": "15_TRIQUI",
@@ -1572,7 +1609,8 @@
     "narracion": "Programación: Reprobado. Redes: Reprobado. Móviles: 08. La pantalla se llena de rojo sangriento. Las trasnochadas jugando, la resaca y la falta de disciplina te pasaron una factura impagable. Toca afrontar las consecuencias, explicarle a tus padres el desastre y pagar el ciclo extraordinario. Game Over, vro.",
     "imagen": "escena_15_jalado",
     "es_final": true,
-    "decisiones": []
+    "decisiones": [],
+    "musica": "track-final-reprobado"
   },
   {
     "id": "15_EXPULSADO",
@@ -1581,6 +1619,7 @@
     "narracion": "Una falta ética grave en Tecsup no se perdona. Fuiste sorprendido copiando en pleno examen final. Te anulan todas las pruebas, repruebas automáticamente todos los cursos del bloque y recibes una suspensión formal de la institución. Elegiste el atajo, y el sistema te devoró sin piedad.",
     "imagen": "escena_15_expulsado",
     "es_final": true,
-    "decisiones": []
+    "decisiones": [],
+    "musica": "track-final-expulsado"
   }
 ]
