@@ -16,7 +16,13 @@ xcuserdata/
 .AppleDouble
 .LSOverride
 
+# google
+ProyectoFinal/GoogleService-Info.plist
+
 # Swift Package Manager
 .build/
 Packages/
 Package.resolved
+
+#google
+
