@@ -7,6 +7,7 @@ struct AuthView: View {
     @State private var isLoginMode = true
     @State private var errorMessage = ""
     @State private var isLoading = false
+    @StateObject private var authManager = AuthManager.shared
     
     var body: some View {
         ZStack {
@@ -100,6 +101,21 @@ struct AuthView: View {
                         .foregroundColor(Theme.accentYellow)
                 }
                 .padding(.top, 10)
+                
+                // Mensaje de éxito si eliminó cuenta
+                if authManager.accountDeletedSuccessfully {
+                    HStack {
+                        Image(systemName: "checkmark.circle.fill")
+                        Text("Cuenta eliminada con éxito")
+                            .font(.subheadline)
+                            .bold()
+                    }
+                    .foregroundColor(.green)
+                    .padding()
+                    .background(Theme.darkGray)
+                    .cornerRadius(12)
+                    .padding(.top, 10)
+                }
                 
                 Spacer()
             }

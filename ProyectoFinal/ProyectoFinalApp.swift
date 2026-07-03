@@ -178,6 +178,14 @@ struct LibraryView: View {
 // MARK: - Profile View
 struct ProfileView: View {
     @ObservedObject var progressManager = ProgressManager.shared
+    @State private var showPrivacyPolicy = false
+    
+    // Account deletion states
+    @State private var showDeleteWarning = false
+    @State private var showFinalDelete = false
+    @State private var deleteConfirmationText = ""
+    @State private var isDeleting = false
+    @State private var deleteError: String? = nil
     
     var body: some View {
         ScrollView {
@@ -224,6 +232,24 @@ struct ProfileView: View {
                     .padding(.horizontal)
                 }
                 
+                // Botón de Política de Privacidad
+                Button(action: {
+                    showPrivacyPolicy = true
+                }) {
+                    HStack {
+                        Image(systemName: "doc.text.magnifyingglass")
+                        Text("Política de Privacidad")
+                            .font(.headline)
+                    }
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(Theme.darkGray)
+                    .cornerRadius(12)
+                }
+                .padding(.horizontal, 20)
+                .padding(.top, 15)
+                
                 // Botón de Cerrar Sesión
                 Button(action: {
                     AuthManager.shared.signOut()
@@ -241,8 +267,71 @@ struct ProfileView: View {
                 }
                 .padding(.horizontal, 20)
                 .padding(.top, 10)
+                
+                // Botón de Eliminar Cuenta
+                Button(action: {
+                    showDeleteWarning = true
+                }) {
+                    HStack {
+                        if isDeleting {
+                            ProgressView()
+                                .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                        } else {
+                            Image(systemName: "trash")
+                        }
+                        Text(isDeleting ? "Eliminando..." : "Eliminar Cuenta")
+                            .font(.headline)
+                    }
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(Color.red.opacity(0.5))
+                    .cornerRadius(12)
+                }
+                .disabled(isDeleting)
+                .padding(.horizontal, 20)
+                .padding(.top, 5)
             }
             .padding(.bottom, 50)
+            .sheet(isPresented: $showPrivacyPolicy) {
+                PrivacyPolicyView()
+            }
+            .alert("¿Seguro que deseas eliminar tu cuenta?", isPresented: $showDeleteWarning) {
+                Button("Cancelar", role: .cancel) { }
+                Button("Continuar", role: .destructive) {
+                    showFinalDelete = true
+                }
+            } message: {
+                Text("Perderás todo tu progreso y logros actuales y no podrás volver a recuperarlos.")
+            }
+            .alert("Confirmar Eliminación", isPresented: $showFinalDelete) {
+                TextField("Escribe 'eliminar'", text: $deleteConfirmationText)
+                Button("Cancelar", role: .cancel) { 
+                    deleteConfirmationText = ""
+                }
+                Button("Eliminar", role: .destructive) {
+                    if deleteConfirmationText.lowercased() == "eliminar" {
+                        isDeleting = true
+                        AuthManager.shared.deleteAccount { error in
+                            isDeleting = false
+                            if let error = error {
+                                deleteError = error.localizedDescription
+                            }
+                        }
+                    }
+                    deleteConfirmationText = ""
+                }
+            } message: {
+                Text("Escribe 'eliminar' para confirmar la eliminación definitiva de tu cuenta y todos tus datos.")
+            }
+            .alert("Error al eliminar", isPresented: Binding<Bool>(
+                get: { deleteError != nil },
+                set: { if !$0 { deleteError = nil } }
+            )) {
+                Button("OK", role: .cancel) { }
+            } message: {
+                Text(deleteError ?? "Es posible que necesites cerrar sesión e ingresar nuevamente (Recent Login).")
+            }
         }
         .background(Theme.black.ignoresSafeArea())
     }
