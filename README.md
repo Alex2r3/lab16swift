@@ -48,6 +48,20 @@ La aplicación ha sido desarrollada utilizando tecnologías y herramientas moder
 
 ---
 
+## INTEGRANTES 
+- Chunga Malque Marco Jesus
+- Alcocer Flores Alexander
+- Vasquez Montes Alexander
+- Vasquez Sanchez Antonio
+- Pinto Quispe Kelvin
+  
+---
+
+## LINK DEL VIDEO EXPLICATIVO
+---
+
+---
+
 ## 🚀 Instalación y Uso Local
 
 Si deseas clonar y probar este proyecto localmente:
