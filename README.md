@@ -58,7 +58,7 @@ La aplicación ha sido desarrollada utilizando tecnologías y herramientas moder
 ---
 
 ## LINK DEL VIDEO EXPLICATIVO
----
+[VIDEO YOUTUBE](https://youtu.be/4-iOt8OQzBc)
 
 ---
 
